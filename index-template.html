@@ -1,0 +1,2479 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mixed-Level English Class Planner — Template Version — ESL Tools Online</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@600&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+
+  <style>
+    /* =============================================
+       CSS VARIABLES & RESET
+    ============================================= */
+    :root {
+      --teal: #1B6B6B;
+      --teal-light: #e8f4f4;
+      --cream: #FAF7F2;
+      --orange: #C2410C;
+      --orange-hover: #a8380a;
+      --dark: #1A1A1A;
+      --card: #FFFFFF;
+      --border: #e2ddd6;
+      --text-muted: #6b7280;
+      --success: #15803d;
+      --error-bg: #fef2f2;
+      --error-border: #fca5a5;
+      --error-text: #991b1b;
+
+      /* CEFR chip colours */
+      --chip-a1: #d1fae5;
+      --chip-a1-text: #065f46;
+      --chip-b1: #dbeafe;
+      --chip-b1-text: #1e40af;
+      --chip-b2: #ccfbf1;
+      --chip-b2-text: #134e4a;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--cream);
+      color: var(--dark);
+      min-height: 100vh;
+      font-size: 16px;
+      line-height: 1.6;
+    }
+
+    h1, h2, h3, h4 {
+      font-family: 'Fraunces', serif;
+      font-weight: 600;
+      line-height: 1.3;
+    }
+
+    /* =============================================
+       SITE HEADER
+    ============================================= */
+    .site-header {
+      background: var(--teal);
+      color: #fff;
+      padding: 1rem 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+    }
+
+    .site-header .brand {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .site-header .brand h1 {
+      font-size: 1.4rem;
+      color: #fff;
+      letter-spacing: -0.01em;
+    }
+
+    .site-header .brand .sub {
+      font-size: 0.8rem;
+      opacity: 0.75;
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 400;
+    }
+
+    /* Template version badge in header */
+    .template-badge {
+      background: rgba(255,255,255,0.18);
+      color: #fff;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.78rem;
+      font-weight: 600;
+      padding: 0.25rem 0.7rem;
+      border-radius: 20px;
+      border: 1px solid rgba(255,255,255,0.35);
+      white-space: nowrap;
+    }
+
+    /* =============================================
+       MAIN LAYOUT
+    ============================================= */
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 1.5rem 1rem 3rem;
+    }
+
+    /* =============================================
+       FORM ELEMENTS (shared)
+    ============================================= */
+    .form-group {
+      margin-bottom: 1.1rem;
+    }
+
+    label {
+      display: block;
+      font-size: 0.9rem;
+      font-weight: 600;
+      margin-bottom: 0.35rem;
+      color: var(--dark);
+    }
+
+    label .optional {
+      font-weight: 400;
+      color: var(--text-muted);
+      font-size: 0.82rem;
+    }
+
+    input[type="text"],
+    input[type="number"],
+    select,
+    textarea {
+      width: 100%;
+      padding: 0.6rem 0.8rem;
+      border: 1.5px solid var(--border);
+      border-radius: 7px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.95rem;
+      color: var(--dark);
+      background: #fff;
+      transition: border-color 0.15s ease;
+      -webkit-appearance: none;
+      appearance: none;
+    }
+
+    input[type="text"]:focus,
+    input[type="number"]:focus,
+    select:focus,
+    textarea:focus {
+      outline: none;
+      border-color: var(--teal);
+      box-shadow: 0 0 0 3px rgba(27,107,107,0.12);
+    }
+
+    select {
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%236b7280' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 0.8rem center;
+      padding-right: 2.2rem;
+    }
+
+    .checkbox-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.6rem;
+    }
+
+    .checkbox-item {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-size: 0.9rem;
+    }
+
+    .checkbox-item input[type="checkbox"] {
+      width: 1rem;
+      height: 1rem;
+      accent-color: var(--teal);
+      cursor: pointer;
+    }
+
+    /* Toggle switch (Yes/No) */
+    .toggle-row {
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+    }
+
+    .toggle-switch {
+      position: relative;
+      width: 46px;
+      height: 26px;
+      flex-shrink: 0;
+    }
+
+    .toggle-switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .toggle-slider {
+      position: absolute;
+      inset: 0;
+      background: #d1d5db;
+      border-radius: 26px;
+      cursor: pointer;
+      transition: background 0.2s ease;
+    }
+
+    .toggle-slider::before {
+      content: '';
+      position: absolute;
+      width: 20px;
+      height: 20px;
+      left: 3px;
+      top: 3px;
+      background: #fff;
+      border-radius: 50%;
+      transition: transform 0.2s ease;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+    }
+
+    .toggle-switch input:checked + .toggle-slider {
+      background: var(--teal);
+    }
+
+    .toggle-switch input:checked + .toggle-slider::before {
+      transform: translateX(20px);
+    }
+
+    .toggle-label {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+    }
+
+    .helper-count-row {
+      display: none;
+      margin-top: 0.6rem;
+      align-items: center;
+      gap: 0.8rem;
+    }
+
+    .helper-count-row.visible { display: flex; }
+
+    .helper-count-row input[type="number"] {
+      width: 80px;
+    }
+
+    /* =============================================
+       MAIN INPUT FORM CARD
+    ============================================= */
+    .form-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1.5rem;
+    }
+
+    .form-card h2 {
+      font-size: 1.2rem;
+      margin-bottom: 1.2rem;
+      color: var(--teal);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .form-card h2 .step-badge {
+      background: var(--teal);
+      color: #fff;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.75rem;
+      font-weight: 600;
+      padding: 0.15rem 0.5rem;
+      border-radius: 20px;
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+    }
+
+    @media (max-width: 600px) {
+      .form-row { grid-template-columns: 1fr; }
+    }
+
+    .topic-helper-note {
+      color: var(--text-muted);
+      font-size: 0.8rem;
+      font-style: italic;
+      line-height: 1.4;
+      margin-top: 0.5rem;
+      margin-bottom: 1.1rem;
+    }
+
+    /* =============================================
+       SMALL-SCREEN POLISH (360–430px)
+    ============================================= */
+    @media (max-width: 430px) {
+      .container        { padding: 1rem 0.75rem 2.5rem; }
+      .form-card        { padding: 1.2rem 1rem; }
+      .form-card h2     { font-size: 1.1rem; }
+      .upgrade-panel    { padding: 1.2rem 1rem; }
+      .upgrade-card     { padding: 1rem 0.9rem; }
+      .form-actions .btn,
+      .form-actions .btn-primary,
+      .form-actions .btn-secondary { width: 100%; justify-content: center; }
+      .tab-panel-card   { padding: 1.1rem 1rem; }
+      .flashcard        { padding: 1.1rem 1rem; }
+      .flashcard-word-box { padding: 1rem 0.6rem; }
+      .flashcard-word   { font-size: 1.6rem; word-break: break-word; }
+      .flashcard-sentence { font-size: 0.95rem; }
+    }
+
+    .form-actions {
+      display: flex;
+      gap: 0.8rem;
+      margin-top: 1.5rem;
+      flex-wrap: wrap;
+    }
+
+    /* =============================================
+       BUTTONS
+    ============================================= */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.65rem 1.2rem;
+      border-radius: 7px;
+      border: none;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.93rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.15s ease, opacity 0.15s ease, transform 0.1s ease;
+      text-decoration: none;
+      white-space: nowrap;
+    }
+
+    .btn:active { transform: scale(0.98); }
+
+    .btn-primary {
+      background: var(--orange);
+      color: #fff;
+    }
+
+    .btn-primary:hover:not(:disabled) { background: var(--orange-hover); }
+
+    .btn-primary:disabled {
+      opacity: 0.55;
+      cursor: not-allowed;
+    }
+
+    .btn-secondary {
+      background: #fff;
+      color: var(--dark);
+      border: 1.5px solid var(--border);
+    }
+
+    .btn-secondary:hover { background: var(--cream); }
+
+    .btn-teal {
+      background: var(--teal);
+      color: #fff;
+    }
+
+    .btn-teal:hover { background: #165858; }
+
+    .btn-ghost {
+      background: transparent;
+      color: var(--text-muted);
+      border: 1.5px solid var(--border);
+      font-size: 0.85rem;
+      padding: 0.45rem 0.9rem;
+    }
+
+    .btn-ghost:hover { background: var(--cream); }
+
+    /* =============================================
+       VALIDATION ERROR
+    ============================================= */
+    .validation-error {
+      background: var(--error-bg);
+      border: 1px solid var(--error-border);
+      color: var(--error-text);
+      border-radius: 7px;
+      padding: 0.7rem 1rem;
+      font-size: 0.88rem;
+      margin-top: 0.8rem;
+      display: none;
+    }
+
+    .validation-error.visible { display: block; }
+
+    /* =============================================
+       UPGRADE PANEL (shown after FREE_LIMIT reached)
+    ============================================= */
+    .upgrade-panel {
+      display: none;
+      margin-top: 1.2rem;
+      background: var(--cream);
+      border: 1.5px solid var(--border);
+      border-radius: 12px;
+      padding: 1.6rem 1.4rem;
+    }
+
+    .upgrade-panel.visible { display: block; }
+
+    .upgrade-panel-header {
+      text-align: center;
+      margin-bottom: 1.4rem;
+    }
+
+    .upgrade-panel-header h3 {
+      color: var(--teal);
+      font-size: 1.25rem;
+      margin-bottom: 0.4rem;
+    }
+
+    .upgrade-panel-header p {
+      color: var(--dark);
+      font-size: 0.95rem;
+    }
+
+    .upgrade-options {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1rem;
+    }
+
+    .upgrade-card {
+      background: #fff;
+      border: 1.5px solid var(--border);
+      border-radius: 10px;
+      padding: 1.2rem 1rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.6rem;
+      transition: border-color 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease;
+    }
+
+    .upgrade-card:hover {
+      border-color: var(--teal);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(27, 107, 107, 0.08);
+    }
+
+    .upgrade-card h4 {
+      color: var(--teal);
+      font-size: 1rem;
+      margin: 0;
+    }
+
+    .upgrade-card .upgrade-desc {
+      color: var(--dark);
+      font-size: 0.88rem;
+      flex-grow: 1;
+    }
+
+    .upgrade-card .upgrade-price {
+      color: var(--orange);
+      font-weight: 700;
+      font-size: 1.05rem;
+    }
+
+    .upgrade-card .btn {
+      width: 100%;
+      justify-content: center;
+      text-align: center;
+      display: inline-block;
+    }
+
+    /* =============================================
+       LOADING STATE
+    ============================================= */
+    .loading-overlay {
+      display: none;
+      text-align: center;
+      padding: 3rem 1rem;
+    }
+
+    .loading-overlay.visible { display: block; }
+
+    .spinner {
+      width: 48px;
+      height: 48px;
+      border: 4px solid var(--teal-light);
+      border-top-color: var(--teal);
+      border-radius: 50%;
+      animation: spin 0.9s linear infinite;
+      margin: 0 auto 1.2rem;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .loading-overlay p {
+      color: var(--teal);
+      font-weight: 600;
+      font-size: 1.05rem;
+    }
+
+    /* =============================================
+       ERROR STATE
+    ============================================= */
+    .api-error {
+      background: var(--error-bg);
+      border: 1px solid var(--error-border);
+      border-radius: 10px;
+      padding: 1.2rem 1.5rem;
+      display: none;
+    }
+
+    .api-error.visible { display: block; }
+
+    .api-error h3 {
+      color: var(--error-text);
+      margin-bottom: 0.5rem;
+      font-size: 1rem;
+    }
+
+    .api-error p {
+      color: var(--error-text);
+      font-size: 0.9rem;
+      margin-bottom: 1rem;
+    }
+
+    /* =============================================
+       OUTPUT SECTION
+    ============================================= */
+    #output-section { display: none; }
+    #output-section.visible { display: block; }
+
+    .output-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1.2rem;
+      flex-wrap: wrap;
+      gap: 0.8rem;
+    }
+
+    .output-header h2 {
+      font-size: 1.15rem;
+      color: var(--teal);
+    }
+
+    .output-header .topic-label {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      font-weight: 400;
+    }
+
+    /* =============================================
+       TAB BAR
+    ============================================= */
+    .tab-bar {
+      display: flex;
+      gap: 0.3rem;
+      flex-wrap: wrap;
+      border-bottom: 2px solid var(--border);
+      margin-bottom: 1.2rem;
+    }
+
+    .tab-btn {
+      background: none;
+      border: none;
+      padding: 0.6rem 1rem;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.88rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      margin-bottom: -2px;
+      border-radius: 6px 6px 0 0;
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+      transition: color 0.15s ease;
+      white-space: nowrap;
+    }
+
+    .tab-btn:hover { color: var(--teal); background: var(--teal-light); }
+
+    .tab-btn.active {
+      color: var(--teal);
+      border-bottom-color: var(--teal);
+      background: var(--teal-light);
+    }
+
+    /* Mobile tab dropdown */
+    .tab-dropdown {
+      display: none;
+      width: 100%;
+      margin-bottom: 1.2rem;
+    }
+
+    @media (max-width: 600px) {
+      .tab-bar { display: none; }
+      .tab-dropdown { display: block; }
+    }
+
+    /* =============================================
+       CEFR CHIPS
+    ============================================= */
+    .chip {
+      display: inline-block;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.72rem;
+      font-weight: 600;
+      padding: 0.15rem 0.5rem;
+      border-radius: 20px;
+      vertical-align: middle;
+    }
+
+    .chip-a1 { background: var(--chip-a1); color: var(--chip-a1-text); }
+    .chip-b1 { background: var(--chip-b1); color: var(--chip-b1-text); }
+    .chip-b2 { background: var(--chip-b2); color: var(--chip-b2-text); }
+
+    /* =============================================
+       TAB PANELS
+    ============================================= */
+    .tab-panel {
+      display: none;
+    }
+
+    .tab-panel.active {
+      display: block;
+    }
+
+    .tab-panel-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1.5rem;
+      min-height: 200px;
+    }
+
+    .tab-panel-actions {
+      display: flex;
+      gap: 0.6rem;
+      margin-bottom: 1rem;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .tab-content {
+      font-size: 0.93rem;
+      line-height: 1.75;
+      color: var(--dark);
+      white-space: pre-wrap;
+    }
+
+    /* AI sub-headers rendered in teal bold */
+    .tab-content .ai-subheader {
+      color: var(--teal);
+      font-weight: 700;
+      font-size: 0.88rem;
+      letter-spacing: 0.03em;
+    }
+
+    /* =============================================
+       REFLECTION TEXTAREA
+    ============================================= */
+    .reflection-textarea {
+      width: 100%;
+      min-height: 320px;
+      resize: vertical;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.93rem;
+      line-height: 1.75;
+      padding: 1rem;
+      border: 1.5px solid var(--border);
+      border-radius: 7px;
+      color: var(--dark);
+      background: #fff;
+    }
+
+    .reflection-textarea:focus {
+      outline: none;
+      border-color: var(--teal);
+      box-shadow: 0 0 0 3px rgba(27,107,107,0.12);
+    }
+
+    .reflection-note {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      margin-top: 0.5rem;
+    }
+
+    /* =============================================
+       GLOBAL OUTPUT ACTIONS
+    ============================================= */
+    .global-actions {
+      display: flex;
+      gap: 0.8rem;
+      margin-top: 1.5rem;
+      flex-wrap: wrap;
+    }
+
+    /* =============================================
+       CONFIRMATION TOAST
+    ============================================= */
+    .toast {
+      position: fixed;
+      bottom: 1.5rem;
+      right: 1.5rem;
+      background: var(--teal);
+      color: #fff;
+      padding: 0.6rem 1.1rem;
+      border-radius: 7px;
+      font-size: 0.88rem;
+      font-weight: 600;
+      opacity: 0;
+      transform: translateY(10px);
+      transition: opacity 0.25s ease, transform 0.25s ease;
+      pointer-events: none;
+      z-index: 1000;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* =============================================
+       INLINE FEEDBACK (near buttons)
+    ============================================= */
+    .inline-feedback {
+      font-size: 0.82rem;
+      color: var(--success);
+      font-weight: 600;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      align-self: center;
+    }
+
+    .inline-feedback.show { opacity: 1; }
+
+    /* =============================================
+       FLASHCARD STYLES (screen)
+    ============================================= */
+    .flashcard-intro {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      margin-bottom: 1.25rem;
+      font-style: italic;
+    }
+
+    .flashcard-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    .flashcard {
+      background: #DBEAFE;
+      border-radius: 12px;
+      padding: 1.5rem 1.75rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .flashcard-word-box {
+      background: #ffffff;
+      border-radius: 8px;
+      width: 100%;
+      padding: 1.4rem 1rem;
+      text-align: center;
+      margin-bottom: 1.1rem;
+    }
+
+    .flashcard-word {
+      font-family: 'Fraunces', serif;
+      font-size: 2rem;
+      font-weight: 600;
+      color: var(--teal);
+      letter-spacing: -0.01em;
+      line-height: 1.2;
+    }
+
+    .flashcard-sentence {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 1rem;
+      color: #374151;
+      text-align: center;
+      font-style: italic;
+      line-height: 1.55;
+    }
+
+    /* =============================================
+       PRINT STYLES
+    ============================================= */
+    @media print {
+      /* Hide everything by default */
+      body * { visibility: hidden; }
+
+      /* Only show the printing panel */
+      .tab-panel.printing,
+      .tab-panel.printing * { visibility: visible; }
+
+      .tab-panel.printing {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        padding: 20mm 20mm 20mm 20mm;
+      }
+
+      /* Hide tab panels that aren't printing */
+      .tab-panel { display: none !important; }
+      .tab-panel.printing { display: block !important; }
+
+      /* Print header injected by JS */
+      .print-header {
+        margin-bottom: 1.5rem;
+        padding-bottom: 0.8rem;
+        border-bottom: 2px solid #333;
+      }
+
+      .print-header h2 { font-size: 1.3rem; }
+      .print-header p { font-size: 0.9rem; color: #444; }
+
+      /* Clean spacing */
+      .tab-panel-card {
+        border: none;
+        padding: 0;
+        box-shadow: none;
+      }
+
+      .tab-panel-actions { display: none !important; }
+
+      .tab-content {
+        font-size: 10.5pt;
+        line-height: 1.6;
+      }
+
+      .reflection-textarea {
+        border: none;
+        padding: 0;
+        min-height: unset;
+        font-size: 10.5pt;
+      }
+
+      .reflection-note { display: none; }
+
+      /* Flashcard print layout — 3 per portrait A4 page */
+      .flashcard-intro { display: none; }
+
+      .flashcard-grid {
+        display: block;
+      }
+
+      .flashcard {
+        height: 78mm;
+        margin-bottom: 6mm;
+        padding: 8mm 12mm;
+        border-radius: 8px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        break-inside: avoid;
+        page-break-inside: avoid;
+        background: #DBEAFE !important;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+      }
+
+      .flashcard-word-box {
+        width: 100%;
+        padding: 6mm 8mm;
+        margin-bottom: 4mm;
+        border-radius: 5px;
+        background: #ffffff !important;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+      }
+
+      .flashcard-word {
+        font-size: 22pt;
+        color: #1B6B6B !important;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+      }
+
+      .flashcard-sentence {
+        font-size: 11pt;
+      }
+    }
+
+    /* =============================================
+       UTILITY
+    ============================================= */
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0,0,0,0);
+      border: 0;
+    }
+
+    .mt-1 { margin-top: 0.5rem; }
+    .mt-2 { margin-top: 1rem; }
+    .text-muted { color: var(--text-muted); font-size: 0.88rem; }
+
+    /* =============================================
+       FOOTER
+    ============================================= */
+    .site-footer {
+      text-align: center;
+      padding: 2rem 1rem;
+      color: var(--text-muted);
+      font-size: 0.82rem;
+      border-top: 1px solid var(--border);
+      margin-top: 2rem;
+    }
+
+    .site-footer a {
+      color: var(--teal);
+      text-decoration: none;
+    }
+
+  </style>
+</head>
+
+<body>
+
+  <!-- =============================================
+       SITE HEADER
+  ============================================= -->
+  <header class="site-header" id="site-header">
+    <div class="brand">
+      <h1>Mixed-Level English Class Planner</h1>
+      <span class="sub">esltools.online — adult &amp; community ESL</span>
+    </div>
+    <span class="template-badge">Template version</span>
+  </header>
+
+  <!-- =============================================
+       MAIN CONTAINER
+  ============================================= -->
+  <main class="container">
+
+    <!-- =============================================
+         STEP 1 — INPUT FORM
+         NOTE: Settings panel (API key) is not needed
+         in this template version. See index.html for
+         the full Claude API-powered version.
+    ============================================= -->
+    <section id="form-section" aria-label="Lesson input form">
+      <div class="form-card">
+        <h2>
+          <span class="step-badge">Step 1</span>
+          Enter your lesson details
+        </h2>
+
+        <form id="lesson-form" novalidate>
+
+          <!-- Topic Category + Lesson Topic -->
+          <div class="form-row">
+            <div class="form-group">
+              <label for="topic-category">
+                Topic category <span style="color:var(--orange)">*</span>
+              </label>
+              <select id="topic-category" required>
+                <option value="" selected disabled>Choose a category…</option>
+                <option value="Health">Health</option>
+                <option value="Transport">Transport</option>
+                <option value="Work">Work</option>
+                <option value="Family">Family</option>
+                <option value="Community">Community</option>
+                <option value="Australian Calendar">Australian Calendar</option>
+                <option value="School Communication">School Communication</option>
+                <option value="Housing">Housing</option>
+                <option value="Appointments">Appointments</option>
+                <option value="Shopping">Shopping</option>
+                <option value="Workplace Confidence">Workplace Confidence</option>
+                <option value="Everyday Conversation">Everyday Conversation</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="lesson-topic">
+                Lesson topic <span style="color:var(--orange)">*</span>
+              </label>
+              <select id="lesson-topic" required disabled>
+                <option value="" selected disabled>Select a category first…</option>
+              </select>
+            </div>
+          </div>
+          <p class="topic-helper-note">We are always updating our lesson topics and resource library.</p>
+
+          <!-- Class duration -->
+          <div class="form-group">
+            <label for="class-duration">Class duration</label>
+            <select id="class-duration">
+              <option value="30 min">30 minutes</option>
+              <option value="45 min">45 minutes</option>
+              <option value="60 min" selected>60 minutes</option>
+              <option value="90 min">90 minutes</option>
+            </select>
+          </div>
+
+          <!-- Learner levels -->
+          <div class="form-group">
+            <label>
+              Learner levels present <span style="color:var(--orange)">*</span>
+            </label>
+            <div class="checkbox-group" id="levels-group">
+              <label class="checkbox-item">
+                <input type="checkbox" name="level" value="Beginner" id="level-beginner" />
+                Beginner <span class="chip chip-a1">A1</span>
+              </label>
+              <label class="checkbox-item">
+                <input type="checkbox" name="level" value="Intermediate" id="level-intermediate" checked />
+                Intermediate <span class="chip chip-b1">B1</span>
+              </label>
+              <label class="checkbox-item">
+                <input type="checkbox" name="level" value="Advanced" id="level-advanced" />
+                Advanced <span class="chip chip-b2">B2</span>
+              </label>
+              <label class="checkbox-item">
+                <input type="checkbox" name="level" value="Conversation Group" id="level-conversation" />
+                Conversation Group
+              </label>
+            </div>
+          </div>
+
+          <!-- Helpers + focus area -->
+          <div class="form-row">
+            <div class="form-group">
+              <label>Helpers present?</label>
+              <div class="toggle-row">
+                <label class="toggle-switch">
+                  <input type="checkbox" id="helpers-toggle" />
+                  <span class="toggle-slider"></span>
+                </label>
+                <span class="toggle-label" id="helpers-label">No</span>
+              </div>
+              <div class="helper-count-row" id="helper-count-row">
+                <label for="helper-count" style="margin:0; white-space:nowrap;">Number of helpers:</label>
+                <input type="number" id="helper-count" min="1" max="20" value="1" />
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="focus-area">
+                Focus area <span class="optional">(optional)</span>
+              </label>
+              <input
+                type="text"
+                id="focus-area"
+                placeholder="e.g. past tense, greetings vocabulary"
+              />
+            </div>
+          </div>
+
+          <!-- Validation error -->
+          <div class="validation-error" id="validation-error" role="alert" aria-live="polite">
+            Please choose a topic category, a lesson topic, and at least one learner level.
+          </div>
+
+          <!-- Form actions -->
+          <div class="form-actions" id="form-actions">
+            <button type="submit" class="btn btn-primary" id="generate-btn">
+              ✦ Generate Lesson
+            </button>
+            <button type="button" class="btn btn-secondary" id="clear-form-btn">
+              Clear Form
+            </button>
+          </div>
+
+          <!-- Upgrade panel (shown after FREE_LIMIT generations) -->
+          <div class="upgrade-panel" id="upgrade-panel" role="region" aria-label="Upgrade options">
+            <div class="upgrade-panel-header">
+              <h3>You've used your 3 free lessons — great start!</h3>
+              <p>To keep planning, choose an option below:</p>
+            </div>
+            <div class="upgrade-options">
+              <div class="upgrade-card">
+                <h4>Single Lesson Pack PDF</h4>
+                <p class="upgrade-desc">Download one complete pre-built lesson pack</p>
+                <p class="upgrade-price">From A$9</p>
+                <a class="btn btn-teal" href="https://payhip.com/SpeakLevel/collection/basic-packs" target="_blank" rel="noopener">View Basic Packs</a>
+              </div>
+              <div class="upgrade-card">
+                <h4>10-Lesson Bundle PDF</h4>
+                <p class="upgrade-desc">10 complete lesson packs — print and teach</p>
+                <p class="upgrade-price">A$49</p>
+                <a class="btn btn-teal" href="https://payhip.com/b/THnRe" target="_blank" rel="noopener">Get the Bundle</a>
+              </div>
+              <div class="upgrade-card">
+                <h4>Monthly App Access</h4>
+                <p class="upgrade-desc">Unlimited lesson generates — any topic, any time</p>
+                <p class="upgrade-price">A$19/month</p>
+                <a class="btn btn-primary" href="https://buy.stripe.com/dRmbIU1hm8Z5dI1bORgrS0b" target="_blank" rel="noopener">Upgrade Monthly</a>
+              </div>
+              <div class="upgrade-card">
+                <h4>Annual App Access</h4>
+                <p class="upgrade-desc">Best value — unlimited access all year</p>
+                <p class="upgrade-price">A$97/year</p>
+                <a class="btn btn-primary" href="https://buy.stripe.com/6oU6oA8JO2AHeM53ilgrS0a" target="_blank" rel="noopener">Upgrade Annual</a>
+              </div>
+            </div>
+          </div>
+
+        </form>
+      </div>
+    </section>
+
+    <!-- =============================================
+         LOADING STATE
+    ============================================= -->
+    <div class="loading-overlay" id="loading-overlay" role="status" aria-live="polite">
+      <div class="spinner" aria-hidden="true"></div>
+      <p>Generating your lesson…</p>
+    </div>
+
+    <!-- =============================================
+         ERROR STATE
+    ============================================= -->
+    <div class="api-error" id="api-error" role="alert" aria-live="assertive">
+      <h3>Something went wrong</h3>
+      <p id="api-error-message">Could not generate the lesson. Please try again.</p>
+      <button class="btn btn-secondary" id="retry-btn">↺ Retry</button>
+    </div>
+
+    <!-- =============================================
+         STEP 2 — OUTPUT SECTION
+    ============================================= -->
+    <section id="output-section" aria-label="Generated lesson output">
+
+      <div class="output-header">
+        <div>
+          <h2>Your Lesson Plan</h2>
+          <p class="topic-label" id="output-topic-label"></p>
+        </div>
+        <button class="btn btn-secondary" id="back-to-form-btn">← Back to Form</button>
+      </div>
+
+      <!-- Tab bar (desktop) -->
+      <nav class="tab-bar" id="tab-bar" role="tablist" aria-label="Lesson tabs"></nav>
+
+      <!-- Tab dropdown (mobile) -->
+      <select class="tab-dropdown" id="tab-dropdown" aria-label="Select tab"></select>
+
+      <!-- Tab panels container -->
+      <div id="tab-panels-container"></div>
+
+      <!-- Global actions -->
+      <div class="global-actions">
+        <button class="btn btn-teal" id="copy-all-btn">⎘ Copy All Outputs</button>
+        <button class="btn btn-secondary" id="new-lesson-btn">＋ New Lesson</button>
+        <span class="inline-feedback" id="copy-all-feedback">Copied!</span>
+      </div>
+
+    </section>
+
+  </main>
+
+  <!-- =============================================
+       TOAST NOTIFICATION
+  ============================================= -->
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <!-- =============================================
+       SITE FOOTER
+  ============================================= -->
+  <footer class="site-footer">
+    <p>
+      Mixed-Level English Class Planner &mdash;
+      <a href="https://esltools.online" target="_blank" rel="noopener">esltools.online</a>
+    </p>
+    <p class="mt-1">Template version — no API key required. Your reflection notes stay in this browser only.</p>
+  </footer>
+
+  <!-- docx library (used for Flashcards → Word doc export) -->
+  <script src="https://unpkg.com/docx@8.5.0/build/index.js"></script>
+
+  <!-- =============================================
+       JAVASCRIPT — ALL APP LOGIC
+  ============================================= -->
+  <script>
+
+    // =============================================
+    // CONSTANTS & CONFIG
+    // =============================================
+
+    // LocalStorage keys
+    const LS_FORM       = 'eslplanner_form';
+    const LS_REFLECTION = 'eslplanner_reflection';
+    const LS_GEN_COUNT  = 'eslplanner_gen_count';
+
+    // Free generation limit
+    const FREE_LIMIT = 3;
+
+    // CEFR chips HTML per level
+    const LEVEL_CHIPS = {
+      'Beginner':           '<span class="chip chip-a1">A1</span>',
+      'Intermediate':       '<span class="chip chip-b1">B1</span>',
+      'Advanced':           '<span class="chip chip-b2">B2</span>',
+      'Conversation Group': '',
+    };
+
+    // Topic categories → lesson topics
+    const TOPICS = {
+      'Health': [
+        'Seeing the Doctor',
+        'Describing Symptoms',
+        'Making a Medical Appointment',
+        'Asking for Medicine',
+        'Understanding Medicare',
+      ],
+      'Transport': [
+        'Catching the Train',
+        'Asking for Directions',
+        'Missing the Bus',
+        'Using an Opal Card',
+        'Reading a Timetable',
+      ],
+      'Work': [
+        'Getting a Job',
+        'Job Interview Practice',
+        'Talking About Work Experience',
+        'Asking for Help at Work',
+        'Workplace Instructions',
+      ],
+      'Family': [
+        'Talking About Family',
+        'School Notes from Children',
+        'Parent–Teacher Meeting',
+        'Family Routines',
+        'Asking for Childcare Information',
+      ],
+      'Community': [
+        'Visiting the Library',
+        'Asking for Help at a Service Desk',
+        'Finding Community Support',
+        'Talking to Council',
+        'Using an Interpreter',
+      ],
+      'Australian Calendar': [
+        'ANZAC Day',
+        'Reconciliation Week',
+        'Mother’s Day',
+        'Australia Day',
+        'Harmony Week',
+      ],
+      'School Communication': [
+        'Calling the School',
+        'Reading a School Note',
+        'Explaining a Child Is Sick',
+        'Asking About an Excursion',
+        'Talking to a Teacher',
+      ],
+      'Housing': [
+        'Renting a Home',
+        'Reporting a Repair',
+        'Talking to a Landlord',
+        'Understanding a Lease',
+        'Bond and Moving Out',
+      ],
+      'Appointments': [
+        'Making an Appointment',
+        'Changing an Appointment',
+        'Cancelling an Appointment',
+        'Asking for the Time and Date',
+        'Phone Booking Practice',
+      ],
+      'Shopping': [
+        'Buying Groceries',
+        'Returning an Item',
+        'Asking About Prices',
+        'Reading a Receipt',
+        'Asking for a Refund',
+      ],
+      'Workplace Confidence': [
+        'Asking the Boss a Question',
+        'Saying I Don’t Understand',
+        'Following Instructions',
+        'Reporting a Problem',
+        'Talking About Availability',
+      ],
+      'Everyday Conversation': [
+        'Greetings and Introductions',
+        'Talking About the Weather',
+        'Weekend Conversation',
+        'Making Small Talk',
+        'Asking for Help',
+      ],
+    };
+
+    // =============================================
+    // DOM REFERENCES
+    // =============================================
+
+    const formSection        = document.getElementById('form-section');
+    const lessonForm         = document.getElementById('lesson-form');
+    const topicCategorySelect = document.getElementById('topic-category');
+    const topicSelect        = document.getElementById('lesson-topic');
+    const durationSelect     = document.getElementById('class-duration');
+    const helpersToggle      = document.getElementById('helpers-toggle');
+    const helpersLabel       = document.getElementById('helpers-label');
+    const helperCountRow     = document.getElementById('helper-count-row');
+    const helperCountInput   = document.getElementById('helper-count');
+    const focusInput         = document.getElementById('focus-area');
+    const generateBtn        = document.getElementById('generate-btn');
+    const clearFormBtn       = document.getElementById('clear-form-btn');
+    const validationError    = document.getElementById('validation-error');
+    const formActions        = document.getElementById('form-actions');
+    const upgradePanel       = document.getElementById('upgrade-panel');
+
+    const loadingOverlay     = document.getElementById('loading-overlay');
+    const apiError           = document.getElementById('api-error');
+    const apiErrorMessage    = document.getElementById('api-error-message');
+    const retryBtn           = document.getElementById('retry-btn');
+
+    const outputSection      = document.getElementById('output-section');
+    const outputTopicLabel   = document.getElementById('output-topic-label');
+    const tabBar             = document.getElementById('tab-bar');
+    const tabDropdown        = document.getElementById('tab-dropdown');
+    const tabPanelsContainer = document.getElementById('tab-panels-container');
+    const backToFormBtn      = document.getElementById('back-to-form-btn');
+    const copyAllBtn         = document.getElementById('copy-all-btn');
+    const copyAllFeedback    = document.getElementById('copy-all-feedback');
+    const newLessonBtn       = document.getElementById('new-lesson-btn');
+    const toast              = document.getElementById('toast');
+
+    // =============================================
+    // APP STATE
+    // =============================================
+
+    let lastFormValues = null; // stored for retry
+
+    // =============================================
+    // GENERATION LIMIT (free tier)
+    // =============================================
+
+    function getGenCount() {
+      const n = parseInt(localStorage.getItem(LS_GEN_COUNT) || '0', 10);
+      return isNaN(n) ? 0 : n;
+    }
+
+    function incrementGenCount() {
+      const next = getGenCount() + 1;
+      localStorage.setItem(LS_GEN_COUNT, String(next));
+      applyLimitGate();
+    }
+
+    function applyLimitGate() {
+      if (getGenCount() >= FREE_LIMIT) {
+        formActions.style.display = 'none';
+        upgradePanel.classList.add('visible');
+      } else {
+        formActions.style.display = '';
+        upgradePanel.classList.remove('visible');
+      }
+    }
+
+    // =============================================
+    // HELPERS TOGGLE
+    // =============================================
+
+    helpersToggle.addEventListener('change', () => {
+      if (helpersToggle.checked) {
+        helpersLabel.textContent = 'Yes';
+        helperCountRow.classList.add('visible');
+      } else {
+        helpersLabel.textContent = 'No';
+        helperCountRow.classList.remove('visible');
+      }
+    });
+
+    // =============================================
+    // TOPIC CATEGORY → LESSON TOPIC DEPENDENT DROPDOWN
+    // =============================================
+
+    function populateTopicOptions(category, preselect = '') {
+      topicSelect.innerHTML = '';
+
+      if (!category || !TOPICS[category]) {
+        const opt = document.createElement('option');
+        opt.value = '';
+        opt.disabled = true;
+        opt.selected = true;
+        opt.textContent = 'Select a category first…';
+        topicSelect.appendChild(opt);
+        topicSelect.disabled = true;
+        return;
+      }
+
+      const placeholder = document.createElement('option');
+      placeholder.value = '';
+      placeholder.disabled = true;
+      placeholder.selected = !preselect;
+      placeholder.textContent = 'Choose a topic…';
+      topicSelect.appendChild(placeholder);
+
+      TOPICS[category].forEach(t => {
+        const opt = document.createElement('option');
+        opt.value = t;
+        opt.textContent = t;
+        if (t === preselect) opt.selected = true;
+        topicSelect.appendChild(opt);
+      });
+
+      topicSelect.disabled = false;
+    }
+
+    topicCategorySelect.addEventListener('change', () => {
+      populateTopicOptions(topicCategorySelect.value);
+    });
+
+    // =============================================
+    // FORM — SAVE / RESTORE FROM LOCALSTORAGE
+    // =============================================
+
+    function saveFormToStorage() {
+      const levels = [...document.querySelectorAll('input[name="level"]:checked')]
+        .map(cb => cb.value);
+      const data = {
+        category:    topicCategorySelect.value,
+        topic:       topicSelect.value,
+        duration:    durationSelect.value,
+        levels:      levels,
+        helpers:     helpersToggle.checked,
+        helperCount: helperCountInput.value,
+        focus:       focusInput.value,
+      };
+      localStorage.setItem(LS_FORM, JSON.stringify(data));
+    }
+
+    function restoreFormFromStorage() {
+      try {
+        const raw = localStorage.getItem(LS_FORM);
+        if (!raw) return;
+        const data = JSON.parse(raw);
+
+        if (data.category && TOPICS[data.category]) {
+          topicCategorySelect.value = data.category;
+          populateTopicOptions(data.category, data.topic || '');
+        }
+        if (data.duration) durationSelect.value = data.duration;
+
+        if (Array.isArray(data.levels)) {
+          document.querySelectorAll('input[name="level"]').forEach(cb => {
+            cb.checked = data.levels.includes(cb.value);
+          });
+        }
+
+        if (data.helpers !== undefined) {
+          helpersToggle.checked = !!data.helpers;
+          helpersLabel.textContent = helpersToggle.checked ? 'Yes' : 'No';
+          if (helpersToggle.checked) helperCountRow.classList.add('visible');
+        }
+
+        if (data.helperCount) helperCountInput.value = data.helperCount;
+        if (data.focus)       focusInput.value = data.focus;
+
+      } catch (e) {
+        // silently ignore parse errors
+      }
+    }
+
+    // =============================================
+    // FORM — CLEAR
+    // =============================================
+
+    function clearForm() {
+      lessonForm.reset();
+      topicCategorySelect.value = '';
+      populateTopicOptions('');
+      helpersLabel.textContent = 'No';
+      helperCountRow.classList.remove('visible');
+      validationError.classList.remove('visible');
+    }
+
+    clearFormBtn.addEventListener('click', clearForm);
+
+    // =============================================
+    // FORM — VALIDATION
+    // =============================================
+
+    function validateForm() {
+      const category = topicCategorySelect.value;
+      const topic    = topicSelect.value;
+      const levels   = document.querySelectorAll('input[name="level"]:checked');
+      if (!category || !topic || levels.length === 0) {
+        validationError.classList.add('visible');
+        if (!category) {
+          topicCategorySelect.focus();
+        } else if (!topic) {
+          topicSelect.focus();
+        }
+        return false;
+      }
+      validationError.classList.remove('visible');
+      return true;
+    }
+
+    // =============================================
+    // TEMPLATE CONTENT GENERATOR
+    //
+    // This function replaces the Claude API call.
+    // It produces structured lesson content based on
+    // the teacher's form inputs.
+    //
+    // TO RECONNECT CLAUDE API:
+    //   1. Open index.html (the full API version).
+    //   2. Copy the callClaudeAPI() and parseAIResponse()
+    //      functions from index.html into this file.
+    //   3. Add the Settings panel HTML back (API key input).
+    //   4. Replace the call to generateLessonContent(formValues)
+    //      in generateLesson() below with:
+    //        const userMessage = buildUserMessage(formValues);
+    //        const rawResponse = await callClaudeAPI(userMessage, apiKey);
+    //        return parseAIResponse(rawResponse, formValues.levels, formValues.helpers);
+    //   5. Add the API key check at the top of generateLesson().
+    // =============================================
+
+    function generateLessonContent(formValues) {
+      const { topic, duration, levels, helpers, helperCount, focus } = formValues;
+
+      // Timing blocks based on duration
+      const timings = {
+        '30 min': [
+          'Minutes 0–5: Warm-up and vocabulary introduction',
+          'Minutes 5–15: Sentence models and guided practice',
+          'Minutes 15–25: Pair activity',
+          'Minutes 25–30: Closing review',
+        ],
+        '45 min': [
+          'Minutes 0–5: Warm-up',
+          'Minutes 5–15: Vocabulary and sentence models',
+          'Minutes 15–30: Pair practice activity',
+          'Minutes 30–40: Group activity',
+          'Minutes 40–45: Closing review',
+        ],
+        '60 min': [
+          'Minutes 0–5: Warm-up',
+          'Minutes 5–15: Vocabulary introduction',
+          'Minutes 15–25: Sentence models and practice',
+          'Minutes 25–40: Pair or group activity',
+          'Minutes 40–55: Extended task',
+          'Minutes 55–60: Closing review',
+        ],
+        '90 min': [
+          'Minutes 0–10: Warm-up and check-in',
+          'Minutes 10–25: Vocabulary and sentence models',
+          'Minutes 25–45: First activity (pairs)',
+          'Minutes 45–65: Second activity (groups)',
+          'Minutes 65–80: Extended or creative task',
+          'Minutes 80–90: Closing review',
+        ],
+      };
+
+      const focusNote = focus ? ` Particular focus on: ${focus}.` : '';
+      const timingLines = (timings[duration] || timings['60 min']).join('\n');
+      const sections = {};
+
+      // ---- LESSON PLAN ----
+      sections['LESSON PLAN'] =
+`AIM:
+Help students develop practical, everyday language skills for "${topic}".${focusNote}
+
+WARM-UP (5 minutes):
+Ask the group: "Has anyone had experience with ${topic}? What happened?" Invite 2–3 short responses. Write any words students say on the board. This activates background knowledge and builds confidence before formal input.
+
+VOCABULARY FOCUS:
+Choose 6–8 key words related to "${topic}" and write them clearly on the board. Say each word aloud and ask students to repeat. Briefly explain meanings using gestures, pictures, or simple definitions — avoid dictionaries at this stage.
+${focus ? `\nSince the focus area is "${focus}", prioritise vocabulary directly connected to it.\n` : ''}
+SENTENCE MODELS:
+Write these sentence frames on the board. Read each one aloud twice, then ask students to repeat chorally:
+
+• "I need to ___."
+• "Can you please help me with ___?"
+• "Where can I find ___?"
+• "I'm not sure how to ___. Can you explain?"
+• "Thank you for ___."
+
+TEACHING STEPS:
+${timingLines}
+
+GROUP ACTIVITY:
+In groups of 3–4, students role-play a real situation involving "${topic}". One student is the main speaker; others respond as they would in real life (e.g. a receptionist, a shopkeeper, a neighbour). After 3–4 minutes, swap roles so everyone practises speaking. Walk around and listen. Note errors to address at the end — do not interrupt the flow.
+
+GENTLE CORRECTION PROMPTS:
+• If a student uses the wrong tense: model the correct sentence naturally and continue — "Yes, so you went to ___..." (don't stop and explain unless asked).
+• If pronunciation is unclear: say "Can you say that word slowly?" then model it once.
+• If a student is stuck: offer the first word — "Try starting with: I need to..."
+• Save pattern errors for the closing review.
+
+CLOSING REVIEW:
+Ask each student to share one new word or sentence from today's lesson. Write responses on the board. Acknowledge effort. Briefly revisit any errors you noticed during the group activity. End with a sentence they can use today: "Before you leave — can everyone practise saying one sentence about ${topic}?"`;
+
+      // ---- BEGINNER ACTIVITIES ----
+      if (levels.includes('Beginner')) {
+        sections['BEGINNER ACTIVITIES'] =
+`VOCABULARY LIST (A1 Foundation):
+Write or print these words clearly. Say each word aloud — students repeat as a group, then individually. Keep the list visible throughout the lesson.
+
+Choose 8 simple words from your vocabulary set for "${topic}". Write them here before class:
+
+1. _______________   2. _______________
+3. _______________   4. _______________
+5. _______________   6. _______________
+7. _______________   8. _______________
+
+For each word: say it → students repeat → point to a picture or draw a simple image if possible.
+
+VISUAL SENTENCE EXAMPLES:
+Write these short sentences on the board. Draw simple images beside them if helpful. Read each sentence aloud twice — students repeat.
+
+• "I go to ___."
+• "I need ___."
+• "Please help me."
+• "Where is ___?"
+• "Thank you."
+
+REPEAT-AFTER-TEACHER PROMPTS:
+Say each phrase slowly. Pause. Students repeat as a group. Then ask 2–3 students to say it individually.
+
+"I need help."  →  [pause]  →  students repeat
+"Where is ___?"  →  [pause]  →  students repeat
+"Can I have ___?"  →  [pause]  →  students repeat
+"My name is ___."  →  [pause]  →  students repeat
+
+FILL-IN SENTENCE FRAMES:
+Give students these sentences on paper or write them on the board. Students fill in the blanks. Circulate and help.
+
+1. I go to _______________ every _______________.
+2. I need _______________ because _______________.
+3. My name is _______________ and I am from _______________.
+4. I like _______________ because it is _______________.
+
+EASY SPEAKING TASK:
+Students work in pairs. Student A points to a word on the vocabulary list and asks: "What is this?" Student B says the word and uses it in a sentence: "It is ___. I need ___." Take turns for 3 minutes. Walk around and listen in.`;
+      }
+
+      // ---- INTERMEDIATE ACTIVITIES ----
+      if (levels.includes('Intermediate')) {
+        sections['INTERMEDIATE ACTIVITIES'] =
+`SENTENCE EXAMPLES (B1 Intermediate):
+Read these sentences. Notice how they describe situations and use connecting words.
+
+• "I usually deal with ${topic} by ___, which works well for me."
+• "Last time I needed to ___, I wasn't sure what to say, so I ___."
+• "If I ever need help with ${topic}, I would probably go to ___ because ___."
+• "In my home country, ___ was different, but here in Australia ___."
+• "I find it easier to ___ when I know the right words."
+
+PAIR CONVERSATION TASK:
+Work with a partner. Use these questions to have a natural 5-minute conversation. It is okay to take turns — you don't need to answer all questions.
+
+1. Have you had to deal with "${topic}" in Australia? What happened?
+2. What words or phrases are most useful to know for this topic?
+3. Is there anything about "${topic}" in Australia that surprised you or was different from home?
+4. What would you do if you didn't understand what someone said in this situation?
+
+SHORT WRITING TASK:
+Write 3–4 sentences about a time you encountered "${topic}" or a situation related to it. Use past tense. Try to use at least two vocabulary words from today's lesson.
+
+Starter: "One time, I needed to ___. I wasn't sure how to say ___, so I ___. In the end, ___."
+
+Share your writing with your partner when finished.
+
+PRACTICAL SCENARIO:
+Read this situation and discuss with your partner:
+
+"You are in a place related to ${topic}. The staff member speaks quickly and you don't catch everything they said. You need to ask them to repeat or explain. What do you say? What do you do if you still don't understand?"
+
+Write down 2–3 phrases you could use. Share with the group.`;
+      }
+
+      // ---- ADVANCED ACTIVITIES ----
+      if (levels.includes('Advanced')) {
+        sections['ADVANCED ACTIVITIES'] =
+`OPINION QUESTION (B2 Light-advanced):
+Discuss this question with a partner or small group. Try to give reasons and examples from your own experience.
+
+"How does the way a society organises ${topic} reflect its broader values around community, access, and equality? What does Australia do well, and what could be improved?"
+
+Take turns to speak for 2–3 minutes each without interruption. Your partner listens, then responds.
+
+ROLE-PLAY SCENARIO:
+Student A is a community advisor or support worker who is explaining the process for "${topic}" to someone new. Student B is a recently arrived migrant with questions and some uncertainty. Role-play the conversation for 5–6 minutes. Use polite, professional but warm language. Then swap roles.
+
+After the role-play, discuss: What was challenging about explaining it clearly? What language did you use to soften or clarify?
+
+PROBLEM-SOLVING TASK:
+Read this scenario and write or discuss your response:
+
+"A newly arrived person in your community needs to navigate ${topic} on their own for the first time. They have limited English and no support person available. What practical steps would you advise them to take? What language barriers might they face, and how could they overcome them?"
+
+Write 4–5 concrete steps. Compare with a partner.
+
+NATURAL LANGUAGE CHALLENGE:
+Rewrite these overly formal sentences in natural spoken English:
+
+1. "I require assistance in locating the relevant department pertaining to ${topic}."
+2. "Could you please indicate the manner in which I should proceed with this matter?"
+3. "I am uncertain as to the correct protocol for addressing this situation."
+
+OPTIONAL IDIOM:
+Idiom: "cut through the red tape"
+Meaning: to deal quickly with official rules and processes that are slow or complicated.
+Example: "Sorting out ${topic} took weeks — there was so much red tape to cut through."
+Try using this idiom in a sentence that relates to your own experience.`;
+      }
+
+      // ---- CONVERSATION GROUP ACTIVITIES ----
+      if (levels.includes('Conversation Group')) {
+        sections['CONVERSATION GROUP ACTIVITIES'] =
+`WARM-UP QUESTION:
+Ask the group: "What is one thing about ${topic} you had to figure out since arriving in Australia — or that surprised you?" Allow open sharing for 3–4 minutes. No pressure to contribute — just a relaxed start.
+
+DISCUSSION QUESTIONS:
+Use these questions to guide the conversation. Move at a natural pace — you don't need to cover all of them. Let the group take the conversation where it goes.
+
+1. What was your first experience with ${topic} in Australia like? What helped you most?
+2. How is ${topic} different here compared to your home country or culture?
+3. What English words or phrases have you found most useful when dealing with ${topic}?
+4. What advice would you give to someone brand new who is facing ${topic} for the first time?
+5. Is there something about ${topic} in Australia that you still find confusing or difficult?
+
+EVERYDAY SCENARIO:
+"Someone new to your neighbourhood asks for your help with ${topic}. They're nervous and not sure where to start. What would you say and do to support them?"
+
+Discuss as a group, or in pairs first, then share with everyone.
+
+PAIR / SHARE ACTIVITY:
+In pairs, take 2 minutes each to talk about a time when ${topic} came up in your life — something you handled well, or something that was hard. Then return to the group and share one thing your partner told you (with their permission).
+
+CONFIDENCE-BUILDING PROMPTS:
+Remind the group at the start or whenever energy dips:
+• "There are no right or wrong answers — share what you feel comfortable sharing."
+• "Making mistakes in English is normal and good — it means you are trying."
+• "Your experience matters. Someone else in this room will relate to what you say."
+
+OPTIONAL NATURAL PHRASE:
+"I'm not sure how to put this, but…"
+Use this when you know what you want to say but can't find the exact English words. It signals honesty and keeps the conversation going.
+
+CORRECTION-LIGHT FACILITATOR NOTE:
+Your role is to keep the conversation flowing, not to correct every error. If something is genuinely unclear, gently paraphrase: "So what you mean is…?" Correct only when an error causes misunderstanding. Prioritise confidence and connection over accuracy at this stage.
+
+CLOSING REFLECTION QUESTION:
+"What is one thing from today's conversation that you will take with you — a word, an idea, or something someone shared?"
+Give everyone a moment to think, then go around the group.`;
+      }
+
+      // ---- HELPER SHEET ----
+      if (helpers) {
+        const count = parseInt(helperCount, 10) || 1;
+        const helperWord = count === 1 ? 'a student' : 'one or two students';
+        sections['HELPER SHEET'] =
+`YOUR ROLE TODAY:
+You are here to support ${helperWord} — not to teach. Your job is to sit alongside them, encourage them to speak, and help when they get stuck. Today's topic is "${topic}". You do not need to know anything special about this topic. You just need to be patient, warm, and present.
+
+DURING EACH ACTIVITY:
+• Let the student try the activity first — don't do it for them.
+• If they are reading aloud: point to each word slowly. Let them follow at their own pace.
+• If they are writing: wait until they ask for help. Then give only the help they need.
+• If it is a speaking task: be their conversation partner. Respond naturally — like a real conversation.
+• Use simple, slow, clear English. Avoid long explanations.
+• If you don't know an answer, say: "Let's ask the teacher together."
+
+IF THE STUDENT IS STUCK:
+• Point to the word or sentence they are working on.
+• Say: "Try saying this word: ___." Say it slowly.
+• Ask: "What do you think this means?"
+• If still stuck: say the first part of the answer and let them finish it.
+• It is always okay to say: "That's a tricky one — let's come back to it."
+• Never leave them feeling embarrassed. Move on gently.
+
+IF THE STUDENT FINISHES EARLY:
+• Ask them to read their answers out loud to you.
+• Say: "Can you use that word in another sentence?"
+• Talk informally about the topic: "Have you ever had to deal with ${topic}? What did you do?"
+• Quietly preview the next activity and introduce it gently.
+• If the teacher has extra worksheets or cards, ask for one.
+
+GENTLE CORRECTION PHRASES:
+Use these when a student makes a mistake. Always acknowledge the effort first.
+• "Good try! We usually say it like this: ___."
+• "Almost — try again: ___."
+• "Yes, and you could also say: ___."
+• "That makes sense — another way to say it is ___."
+Never say "That's wrong" or "No." Always affirm the attempt, then model the correct version.
+
+DO NOT:
+• Do not speak for the student — give them time to think and answer.
+• Do not rush — silence is okay. Students often need a few seconds.
+• Do not use long or complicated English to explain something simple.
+• Do not take over the activity or fill in the writing for them.
+• Do not worry if the student seems slow or unsure — that is normal. Your calm presence helps.
+
+DEBRIEF NOTES:
+After class, let the teacher know:
+• Did the student seem to understand the activities?
+• Were any particular words or tasks difficult for them?
+• Did the student seem confident or anxious?
+• Is there anything the teacher should follow up or repeat next week?
+
+Thank you for your help today. It makes a real difference.`;
+      }
+
+      // ---- FLASHCARDS ----
+      // Stored as an array of card objects (not a string like other sections)
+      sections['FLASHCARDS'] = generateFlashcardCards(topic, focus);
+
+      return sections;
+    }
+
+    // =============================================
+    // FLASHCARD GENERATOR
+    // Returns an array of { word, sentence } objects
+    // based on the lesson topic and focus area.
+    // Replace or extend this list to suit your topic.
+    // =============================================
+
+    function generateFlashcardCards(topic, focus) {
+      // Eight practical vocabulary cards using the lesson topic.
+      // Teachers can edit these before printing.
+      return [
+        { word: 'appointment',  sentence: `I have an appointment about ${topic}.` },
+        { word: 'information',  sentence: `I need information about ${topic}.` },
+        { word: 'understand',   sentence: `I do not understand. Can you explain ${topic} slowly?` },
+        { word: 'question',     sentence: `I have a question about ${topic}.` },
+        { word: 'help',         sentence: `Can you help me with ${topic}, please?` },
+        { word: 'explain',      sentence: `Please explain this part of ${topic} to me.` },
+        { word: 'important',    sentence: `It is important to know about ${topic}.` },
+        { word: 'address',      sentence: `What is the address? I need to go there for ${topic}.` },
+      ];
+    }
+
+    // =============================================
+    // BUILD FLASHCARDS PANEL HTML
+    // =============================================
+
+    function buildFlashcardsPanel(tab, cards) {
+      let cardsHTML = '';
+      cards.forEach(card => {
+        cardsHTML += `
+          <div class="flashcard">
+            <div class="flashcard-word-box">
+              <div class="flashcard-word">${escapeHTML(card.word)}</div>
+            </div>
+            <div class="flashcard-sentence">${escapeHTML(card.sentence)}</div>
+          </div>
+        `;
+      });
+
+      return `
+        <div class="tab-panel-card">
+          <div class="tab-panel-actions">
+            <button class="btn btn-ghost print-tab-btn" type="button">⎙ Print This Tab</button>
+            <button class="btn btn-teal flashcards-docx-btn" type="button">⬇ Download Flashcards as Word Doc</button>
+            <span class="inline-feedback copy-tab-feedback"></span>
+          </div>
+          <p class="flashcard-intro">Suggested vocabulary cards for this topic — edit the words and sentences before printing to match your lesson.</p>
+          <div class="flashcard-grid" id="content-${tab.id}">
+            ${cardsHTML}
+          </div>
+        </div>
+      `;
+    }
+
+    // =============================================
+    // RENDER AI / TEMPLATE TEXT
+    // (escape HTML + style ALL-CAPS sub-headers)
+    // =============================================
+
+    function renderAIText(rawText) {
+      // 1. Escape HTML entities
+      let escaped = rawText
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+
+      // 2. Detect ALL-CAPS sub-headers and style them in teal bold
+      escaped = escaped.replace(
+        /(^|\n)([A-Z][A-Z\s\-\/]{2,}:?)/g,
+        (match, pre, header) => {
+          if (header.trim().length < 3) return match;
+          return `${pre}<span class="ai-subheader">${header}</span>`;
+        }
+      );
+
+      // 3. Replace newlines with <br>
+      escaped = escaped.replace(/\n/g, '<br />');
+
+      return escaped;
+    }
+
+    // =============================================
+    // BUILD & RENDER OUTPUT TABS
+    // =============================================
+
+    function buildOutputTabs(formValues, parsedSections) {
+      const { topic, levels, helpers } = formValues;
+
+      // Clear existing content
+      tabBar.innerHTML = '';
+      tabDropdown.innerHTML = '';
+      tabPanelsContainer.innerHTML = '';
+
+      // Determine which tabs to show
+      const tabDefs = [];
+
+      tabDefs.push({ id: 'lesson-plan', label: 'Lesson Plan', chip: '', sectionKey: 'LESSON PLAN', type: 'ai' });
+
+      if (levels.includes('Beginner')) {
+        tabDefs.push({ id: 'beginner', label: 'Beginner', chip: LEVEL_CHIPS['Beginner'], sectionKey: 'BEGINNER ACTIVITIES', type: 'ai' });
+      }
+      if (levels.includes('Intermediate')) {
+        tabDefs.push({ id: 'intermediate', label: 'Intermediate', chip: LEVEL_CHIPS['Intermediate'], sectionKey: 'INTERMEDIATE ACTIVITIES', type: 'ai' });
+      }
+      if (levels.includes('Advanced')) {
+        tabDefs.push({ id: 'advanced', label: 'Advanced', chip: LEVEL_CHIPS['Advanced'], sectionKey: 'ADVANCED ACTIVITIES', type: 'ai' });
+      }
+      if (levels.includes('Conversation Group')) {
+        tabDefs.push({ id: 'conversation', label: 'Conversation Group', chip: LEVEL_CHIPS['Conversation Group'], sectionKey: 'CONVERSATION GROUP ACTIVITIES', type: 'ai' });
+      }
+      if (helpers) {
+        tabDefs.push({ id: 'helper-sheet', label: 'Helper Sheet', chip: '', sectionKey: 'HELPER SHEET', type: 'ai' });
+      }
+
+      // Flashcards tab — always shown, before Reflection
+      tabDefs.push({ id: 'flashcards', label: 'Flashcards', chip: '', sectionKey: 'FLASHCARDS', type: 'flashcards' });
+
+      // Reflection tab is always last, never AI-generated
+      tabDefs.push({ id: 'reflection', label: 'Reflection', chip: '', sectionKey: null, type: 'reflection' });
+
+      // Build tab buttons and panels
+      tabDefs.forEach((tab, index) => {
+        // --- Tab button ---
+        const btn = document.createElement('button');
+        btn.className = 'tab-btn' + (index === 0 ? ' active' : '');
+        btn.setAttribute('role', 'tab');
+        btn.setAttribute('aria-selected', index === 0 ? 'true' : 'false');
+        btn.setAttribute('aria-controls', `panel-${tab.id}`);
+        btn.dataset.tab = tab.id;
+        btn.innerHTML = tab.label + (tab.chip ? ' ' + tab.chip : '');
+        tabBar.appendChild(btn);
+
+        // --- Mobile dropdown option ---
+        const opt = document.createElement('option');
+        opt.value = tab.id;
+        opt.textContent = tab.label;
+        tabDropdown.appendChild(opt);
+
+        // --- Tab panel ---
+        const panel = document.createElement('div');
+        panel.className = 'tab-panel' + (index === 0 ? ' active' : '');
+        panel.id = `panel-${tab.id}`;
+        panel.setAttribute('role', 'tabpanel');
+        panel.setAttribute('aria-labelledby', `tab-${tab.id}`);
+
+        if (tab.type === 'reflection') {
+          panel.innerHTML = buildReflectionPanel();
+        } else if (tab.type === 'flashcards') {
+          const cards = parsedSections[tab.sectionKey] || [];
+          panel.innerHTML = buildFlashcardsPanel(tab, cards);
+        } else {
+          const content = parsedSections[tab.sectionKey] || '';
+          panel.innerHTML = buildAIPanel(tab, content);
+        }
+
+        tabPanelsContainer.appendChild(panel);
+      });
+
+      // Wire up tab events
+      wireTabEvents();
+
+      // Wire up reflection autosave
+      const reflectionTextarea = document.getElementById('reflection-textarea');
+      if (reflectionTextarea) {
+        const saved = localStorage.getItem(LS_REFLECTION);
+        if (saved) {
+          reflectionTextarea.value = saved;
+        }
+        reflectionTextarea.addEventListener('blur', () => {
+          localStorage.setItem(LS_REFLECTION, reflectionTextarea.value);
+          showToast('Reflection saved');
+        });
+      }
+
+      // Wire up per-tab Print and Copy buttons
+      tabDefs.forEach(tab => {
+        const panel = document.getElementById(`panel-${tab.id}`);
+        if (!panel) return;
+
+        const printBtn = panel.querySelector('.print-tab-btn');
+        const copyBtn  = panel.querySelector('.copy-tab-btn');
+
+        if (printBtn) {
+          printBtn.addEventListener('click', () => printTab(tab.id, tab.label, topic));
+        }
+
+        if (copyBtn) {
+          copyBtn.addEventListener('click', () => copyTab(tab.id, copyBtn));
+        }
+
+        // Flashcards-only: Word doc export
+        if (tab.type === 'flashcards') {
+          const docxBtn = panel.querySelector('.flashcards-docx-btn');
+          if (docxBtn) {
+            docxBtn.addEventListener('click', () => downloadFlashcardsDocx(tab.id, topic));
+          }
+        }
+      });
+    }
+
+    // =============================================
+    // BUILD AI PANEL HTML
+    // =============================================
+
+    function buildAIPanel(tab, rawContent) {
+      const rendered = rawContent
+        ? renderAIText(rawContent)
+        : '<p style="color:var(--text-muted); font-style:italic; font-size:0.9rem;">No content was generated for this section. Try again.</p>';
+
+      return `
+        <div class="tab-panel-card">
+          <div class="tab-panel-actions">
+            <button class="btn btn-ghost print-tab-btn" type="button">⎙ Print This Tab</button>
+            <button class="btn btn-ghost copy-tab-btn" type="button">⎘ Copy This Tab</button>
+            <span class="inline-feedback copy-tab-feedback"></span>
+          </div>
+          <div class="tab-content" id="content-${tab.id}">${rendered}</div>
+        </div>
+      `;
+    }
+
+    // =============================================
+    // BUILD REFLECTION PANEL HTML
+    // =============================================
+
+    const REFLECTION_TEMPLATE = `What worked:
+
+
+What students struggled with:
+
+
+Vocabulary to repeat:
+
+
+Students needing extra support:
+
+
+Notes for next lesson:
+`;
+
+    function buildReflectionPanel() {
+      return `
+        <div class="tab-panel-card">
+          <div class="tab-panel-actions">
+            <button class="btn btn-ghost print-tab-btn" type="button">⎙ Print This Tab</button>
+            <button class="btn btn-ghost copy-tab-btn" type="button">⎘ Copy This Tab</button>
+            <span class="inline-feedback copy-tab-feedback"></span>
+          </div>
+          <textarea
+            class="reflection-textarea"
+            id="reflection-textarea"
+            placeholder="${REFLECTION_TEMPLATE}"
+            aria-label="Lesson reflection notes"
+          ></textarea>
+          <p class="reflection-note">Your notes are saved automatically to this browser when you click outside the box.</p>
+        </div>
+      `;
+    }
+
+    // =============================================
+    // TAB SWITCHING
+    // =============================================
+
+    function wireTabEvents() {
+      tabBar.addEventListener('click', e => {
+        const btn = e.target.closest('.tab-btn');
+        if (!btn) return;
+        switchTab(btn.dataset.tab);
+      });
+
+      tabDropdown.addEventListener('change', () => {
+        switchTab(tabDropdown.value);
+      });
+    }
+
+    function switchTab(tabId) {
+      tabBar.querySelectorAll('.tab-btn').forEach(b => {
+        const isActive = b.dataset.tab === tabId;
+        b.classList.toggle('active', isActive);
+        b.setAttribute('aria-selected', isActive.toString());
+      });
+
+      tabDropdown.value = tabId;
+
+      tabPanelsContainer.querySelectorAll('.tab-panel').forEach(p => {
+        p.classList.toggle('active', p.id === `panel-${tabId}`);
+      });
+    }
+
+    // =============================================
+    // PRINT TAB
+    // =============================================
+
+    function printTab(tabId, tabLabel, topic) {
+      const panel = document.getElementById(`panel-${tabId}`);
+      if (!panel) return;
+
+      const existingPrintHeader = panel.querySelector('.print-header');
+      if (existingPrintHeader) existingPrintHeader.remove();
+
+      const printHeader = document.createElement('div');
+      printHeader.className = 'print-header';
+      printHeader.innerHTML = `
+        <h2>Mixed-Level English Class Planner — esltools.online</h2>
+        <p>Topic: <strong>${escapeHTML(topic)}</strong> &mdash; Tab: ${escapeHTML(tabLabel)}</p>
+      `;
+      panel.prepend(printHeader);
+
+      panel.classList.add('printing');
+      window.print();
+      panel.classList.remove('printing');
+      printHeader.remove();
+    }
+
+    function escapeHTML(str) {
+      return str
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+    }
+
+    // =============================================
+    // COPY TAB
+    // =============================================
+
+    async function copyTab(tabId, btnEl) {
+      let text = '';
+
+      if (tabId === 'reflection') {
+        const ta = document.getElementById('reflection-textarea');
+        text = ta ? ta.value : '';
+      } else {
+        const el = document.getElementById(`content-${tabId}`);
+        if (el) {
+          text = el.innerText || el.textContent || '';
+        }
+      }
+
+      try {
+        await navigator.clipboard.writeText(text);
+        const feedbackEl = btnEl.closest('.tab-panel-card').querySelector('.copy-tab-feedback');
+        showInlineFeedback(feedbackEl, 'Copied!');
+      } catch (err) {
+        showToast('Could not copy — please copy manually');
+      }
+    }
+
+    // =============================================
+    // DOWNLOAD FLASHCARDS AS WORD DOC (.docx)
+    // =============================================
+
+    async function downloadFlashcardsDocx(tabId, topic) {
+      if (typeof docx === 'undefined') {
+        showToast('Word library still loading — try again in a moment');
+        return;
+      }
+
+      const grid = document.getElementById(`content-${tabId}`);
+      if (!grid) {
+        showToast('No flashcards found to export');
+        return;
+      }
+
+      const cardEls = grid.querySelectorAll('.flashcard');
+      if (cardEls.length === 0) {
+        showToast('No flashcards found to export');
+        return;
+      }
+
+      // Pull current word + sentence from each visible flashcard
+      const cards = [];
+      cardEls.forEach(el => {
+        const wordEl = el.querySelector('.flashcard-word');
+        const sentEl = el.querySelector('.flashcard-sentence');
+        const word = wordEl ? (wordEl.innerText || wordEl.textContent || '').trim() : '';
+        const sentence = sentEl ? (sentEl.innerText || sentEl.textContent || '').trim() : '';
+        if (word || sentence) cards.push({ word, sentence });
+      });
+
+      const { Document, Packer, Paragraph, TextRun, AlignmentType, PageBreak, HeadingLevel } = docx;
+
+      const children = [];
+
+      cards.forEach((card, index) => {
+        children.push(
+          new Paragraph({
+            alignment: AlignmentType.CENTER,
+            spacing: { before: 400, after: 200 },
+            children: [
+              new TextRun({
+                text: card.word,
+                bold: true,
+                size: 96, // half-points → 48pt
+              }),
+            ],
+          })
+        );
+        children.push(
+          new Paragraph({
+            alignment: AlignmentType.CENTER,
+            spacing: { before: 100, after: 400 },
+            children: [
+              new TextRun({
+                text: card.sentence,
+                size: 32, // 16pt
+              }),
+            ],
+          })
+        );
+        if (index < cards.length - 1) {
+          children.push(
+            new Paragraph({
+              children: [new PageBreak()],
+            })
+          );
+        }
+      });
+
+      const doc = new Document({
+        sections: [{ children }],
+      });
+
+      try {
+        const blob = await Packer.toBlob(doc);
+        const safeTopic = (topic || 'lesson').replace(/[\\/:*?"<>|]+/g, '').trim() || 'lesson';
+        const filename = `Flashcards-${safeTopic}.docx`;
+
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+
+        showToast('Flashcards downloaded');
+      } catch (err) {
+        showToast('Could not create Word doc — please try again');
+      }
+    }
+
+    // =============================================
+    // COPY ALL OUTPUTS
+    // =============================================
+
+    copyAllBtn.addEventListener('click', async () => {
+      const panels = tabPanelsContainer.querySelectorAll('.tab-panel');
+      let allText = '';
+
+      panels.forEach(panel => {
+        const tabId = panel.id.replace('panel-', '');
+        const tabBtn = tabBar.querySelector(`[data-tab="${tabId}"]`);
+        const tabLabel = tabBtn ? tabBtn.textContent.replace(/[A-Z0-9]+\s*$/, '').trim() : tabId;
+
+        allText += `\n========================================\n`;
+        allText += `${tabLabel.toUpperCase()}\n`;
+        allText += `========================================\n\n`;
+
+        if (tabId === 'reflection') {
+          const ta = document.getElementById('reflection-textarea');
+          allText += ta ? ta.value : '';
+        } else {
+          const el = document.getElementById(`content-${tabId}`);
+          allText += el ? (el.innerText || el.textContent || '') : '';
+        }
+
+        allText += '\n';
+      });
+
+      try {
+        await navigator.clipboard.writeText(allText.trim());
+        showInlineFeedback(copyAllFeedback, 'Copied!');
+      } catch (err) {
+        showToast('Could not copy — please copy manually');
+      }
+    });
+
+    // =============================================
+    // SHOW / HIDE SECTIONS
+    // =============================================
+
+    function showLoadingState() {
+      formSection.style.display   = 'none';
+      loadingOverlay.classList.add('visible');
+      apiError.classList.remove('visible');
+      outputSection.classList.remove('visible');
+    }
+
+    function showFormState() {
+      formSection.style.display   = '';
+      loadingOverlay.classList.remove('visible');
+      apiError.classList.remove('visible');
+      outputSection.classList.remove('visible');
+    }
+
+    function showErrorState(message) {
+      formSection.style.display   = 'none';
+      loadingOverlay.classList.remove('visible');
+      apiError.classList.add('visible');
+      apiErrorMessage.textContent = message;
+      outputSection.classList.remove('visible');
+    }
+
+    function showOutputState() {
+      formSection.style.display   = 'none';
+      loadingOverlay.classList.remove('visible');
+      apiError.classList.remove('visible');
+      outputSection.classList.add('visible');
+    }
+
+    // =============================================
+    // MAIN GENERATE FLOW
+    //
+    // TO RECONNECT CLAUDE API: replace the
+    // generateLessonContent() call below with
+    // callClaudeAPI() + parseAIResponse() from
+    // index.html. See the comment near
+    // generateLessonContent() above for full steps.
+    // =============================================
+
+    async function generateLesson(formValues) {
+      // Block if free limit already reached
+      if (getGenCount() >= FREE_LIMIT) {
+        applyLimitGate();
+        showFormState();
+        return;
+      }
+
+      showLoadingState();
+
+      try {
+        // Brief artificial delay so the loading state is visible
+        // (remove this when reconnecting the real API)
+        await new Promise(resolve => setTimeout(resolve, 600));
+
+        // --- TEMPLATE GENERATOR (no API key required) ---
+        // Replace this line with an API call to reconnect Claude:
+        const parsedSections = generateLessonContent(formValues);
+        // ------------------------------------------------
+
+        outputTopicLabel.textContent = `Topic: "${formValues.topic}" — ${formValues.duration}`;
+        buildOutputTabs(formValues, parsedSections);
+        showOutputState();
+
+        // Only count successful generations against the free limit
+        incrementGenCount();
+
+      } catch (err) {
+        showErrorState(err.message || 'An unexpected error occurred. Please try again.');
+      }
+    }
+
+    // =============================================
+    // FORM SUBMIT
+    // =============================================
+
+    lessonForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      if (!validateForm()) return;
+
+      const levels = [...document.querySelectorAll('input[name="level"]:checked')]
+        .map(cb => cb.value);
+
+      const formValues = {
+        category:    topicCategorySelect.value,
+        topic:       topicSelect.value,
+        duration:    durationSelect.value,
+        levels:      levels,
+        helpers:     helpersToggle.checked,
+        helperCount: parseInt(helperCountInput.value, 10) || 1,
+        focus:       focusInput.value.trim(),
+      };
+
+      saveFormToStorage();
+      lastFormValues = formValues;
+
+      await generateLesson(formValues);
+    });
+
+    // =============================================
+    // RETRY BUTTON
+    // =============================================
+
+    retryBtn.addEventListener('click', async () => {
+      if (!lastFormValues) {
+        showFormState();
+        return;
+      }
+      await generateLesson(lastFormValues);
+    });
+
+    // =============================================
+    // BACK TO FORM / NEW LESSON
+    // =============================================
+
+    backToFormBtn.addEventListener('click', () => {
+      showFormState();
+    });
+
+    newLessonBtn.addEventListener('click', () => {
+      clearForm();
+      showFormState();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+
+    // =============================================
+    // TOAST NOTIFICATION
+    // =============================================
+
+    let toastTimer = null;
+
+    function showToast(message) {
+      toast.textContent = message;
+      toast.classList.add('show');
+      if (toastTimer) clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => {
+        toast.classList.remove('show');
+      }, 2500);
+    }
+
+    // =============================================
+    // INLINE FEEDBACK (near button)
+    // =============================================
+
+    function showInlineFeedback(el, message) {
+      if (!el) return;
+      el.textContent = message;
+      el.classList.add('show');
+      setTimeout(() => {
+        el.classList.remove('show');
+        el.textContent = '';
+      }, 2000);
+    }
+
+    // =============================================
+    // PAGE INIT
+    // =============================================
+
+    function init() {
+      restoreFormFromStorage();
+      applyLimitGate();
+    }
+
+    init();
+
+  </script>
+
+</body>
+</html>
