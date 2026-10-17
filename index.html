@@ -3,7 +3,17 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Mixed-Level English Class Planner — Template Version — ESL Tools Online</title>
+  <title>Mixed-Level English Class Planner | ESL Teacher Tools</title>
+  <meta name="description" content="Free mixed-level English lesson planner for adult and community ESL classes. Generate a lesson plan, level-based activities, a volunteer helper sheet, printable flashcards and a reflection sheet in seconds." />
+  <meta name="theme-color" content="#1B6B6B" />
+  <link rel="canonical" href="https://esltools.online/" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="ESL Teacher Tools" />
+  <meta property="og:title" content="Mixed-Level English Class Planner | ESL Teacher Tools" />
+  <meta property="og:description" content="Plan one lesson for Beginner to Advanced adult learners — with a helper sheet for volunteers, printable flashcards and a reflection sheet." />
+  <meta property="og:url" content="https://esltools.online/" />
+  <meta name="twitter:card" content="summary" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%231B6B6B'/%3E%3Ctext x='32' y='42' font-family='Arial,sans-serif' font-size='26' font-weight='700' fill='%23fff' text-anchor='middle'%3EESL%3C/text%3E%3C/svg%3E" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@600&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
@@ -427,6 +437,13 @@
       font-size: 0.95rem;
     }
 
+    .upgrade-store-note {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      margin-top: 0.9rem;
+      text-align: center;
+    }
+
     .upgrade-options {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
@@ -822,25 +839,34 @@
     /* =============================================
        PRINT STYLES
     ============================================= */
+    /* Print-only copy of the reflection notes (textareas clip when printed) */
+    .reflection-print { display: none; }
+
+    @page { size: A4; margin: 15mm; }
+
     @media print {
-      /* Hide everything by default */
-      body * { visibility: hidden; }
+      /* Hide the app chrome. Content stays in normal document flow so long
+         tabs continue onto page 2+ (position: fixed clipped them to one page). */
+      .site-header,
+      .site-footer,
+      #form-section,
+      .loading-overlay,
+      .api-error,
+      .output-header,
+      .tab-bar,
+      .tab-dropdown,
+      .global-actions,
+      .toast { display: none !important; }
 
-      /* Only show the printing panel */
-      .tab-panel.printing,
-      .tab-panel.printing * { visibility: visible; }
+      body { background: #fff !important; }
+      .container { max-width: none !important; margin: 0 !important; padding: 0 !important; }
+      #output-section { display: block !important; }
 
-      .tab-panel.printing {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        padding: 20mm 20mm 20mm 20mm;
-      }
-
-      /* Hide tab panels that aren't printing */
+      /* Only the tab being printed is shown. If the teacher uses the browser's
+         own Print command (no .printing panel), fall back to the active tab. */
       .tab-panel { display: none !important; }
-      .tab-panel.printing { display: block !important; }
+      .tab-panel.printing { display: block !important; position: static; padding: 0; }
+      #tab-panels-container:not(:has(.tab-panel.printing)) .tab-panel.active { display: block !important; }
 
       /* Print header injected by JS */
       .print-header {
@@ -866,11 +892,15 @@
         line-height: 1.6;
       }
 
-      .reflection-textarea {
-        border: none;
-        padding: 0;
-        min-height: unset;
-        font-size: 10.5pt;
+      .reflection-textarea { display: none !important; }
+      .reflection-print {
+        display: block !important;
+        white-space: pre-wrap;
+        word-wrap: break-word;
+        font-family: inherit;
+        font-size: 11pt;
+        line-height: 1.7;
+        color: #1A1A1A;
       }
 
       .reflection-note { display: none; }
@@ -882,7 +912,7 @@
          a landscape A4 page. @page margin (set by printTab) handles the
          outer page edges. */
       #panel-flashcards.tab-panel.printing {
-        padding: 5mm 5mm 5mm 5mm !important;
+        padding: 0 !important;
       }
 
       #panel-flashcards .print-header {
@@ -901,7 +931,7 @@
         padding: 0 !important;
         border-radius: 0 !important;
         width: 100%;
-        height: 168mm;
+        height: 165mm;
       }
 
       .flashcard {
@@ -1020,7 +1050,7 @@
       <h1>Mixed-Level English Class Planner</h1>
       <span class="sub">esltools.online — adult &amp; community ESL</span>
     </div>
-    <span class="template-badge">Template version</span>
+    <span class="template-badge">Free to try</span>
   </header>
 
   <!-- =============================================
@@ -1030,9 +1060,8 @@
 
     <!-- =============================================
          STEP 1 — INPUT FORM
-         NOTE: Settings panel (API key) is not needed
-         in this template version. See index.html for
-         the full Claude API-powered version.
+         Lessons are built from templates in the browser
+         (no API key, no server call).
     ============================================= -->
     <section id="form-section" aria-label="Lesson input form">
       <div class="form-card">
@@ -1178,7 +1207,7 @@
               </div>
               <div class="upgrade-card">
                 <h4>Monthly App Access</h4>
-                <p class="upgrade-desc">Unlimited lesson generates — any topic, any time</p>
+                <p class="upgrade-desc">Unlimited lesson generation — any topic, any time</p>
                 <p class="upgrade-price">A$19/month</p>
                 <a class="btn btn-primary" href="https://buy.stripe.com/dRmbIU1hm8Z5dI1bORgrS0b" target="_blank" rel="noopener">Upgrade Monthly</a>
               </div>
@@ -1189,6 +1218,7 @@
                 <a class="btn btn-primary" href="https://buy.stripe.com/6oU6oA8JO2AHeM53ilgrS0a" target="_blank" rel="noopener">Upgrade Annual</a>
               </div>
             </div>
+            <p class="upgrade-store-note">Lesson pack PDFs are sold through our SpeakLevel store on Payhip. App access is paid securely through Stripe.</p>
           </div>
 
         </form>
@@ -1258,7 +1288,7 @@
       Mixed-Level English Class Planner &mdash;
       <a href="https://esltools.online" target="_blank" rel="noopener">esltools.online</a>
     </p>
-    <p class="mt-1">Template version — no API key required. Your reflection notes stay in this browser only.</p>
+    <p class="mt-1">Lessons are created in your browser. Your form and reflection notes are saved in this browser only — nothing is sent to a server.</p>
     <p class="mt-1" id="reset-trial-row" hidden>
       <button type="button" id="reset-trial-btn" class="reset-trial-btn">Reset Free Trial Counter</button>
     </p>
@@ -1642,6 +1672,10 @@
       };
 
       const focusNote = focus ? ` Particular focus on: ${focus}.` : '';
+      const vocabWords = getTopicVocab(topic).map(c => c.word);
+      const vocabNumbered = vocabWords
+        .map((w, i) => `${i + 1}. ${w}`)
+        .join('\n');
       const timingLines = (timings[duration] || timings['60 min']).join('\n');
       const sections = {};
 
@@ -1654,7 +1688,10 @@ WARM-UP (5 minutes):
 Ask the group: "Has anyone had experience with ${topic}? What happened?" Invite 2–3 short responses. Write any words students say on the board. This activates background knowledge and builds confidence before formal input.
 
 VOCABULARY FOCUS:
-Choose 6–8 key words related to "${topic}" and write them clearly on the board. Say each word aloud and ask students to repeat. Briefly explain meanings using gestures, pictures, or simple definitions — avoid dictionaries at this stage.
+Write these key words clearly on the board (they match your Flashcards tab — swap any that don't suit your group):
+Key words: ${vocabWords.join(' · ')}
+
+Say each word aloud and ask students to repeat. Briefly explain meanings using gestures, pictures, or simple definitions — avoid dictionaries at this stage.
 ${focus ? `\nSince the focus area is "${focus}", prioritise vocabulary directly connected to it.\n` : ''}
 SENTENCE MODELS:
 Write these sentence frames on the board. Read each one aloud twice, then ask students to repeat chorally:
@@ -1686,12 +1723,9 @@ Ask each student to share one new word or sentence from today's lesson. Write re
 `VOCABULARY LIST (A1 Foundation):
 Write or print these words clearly. Say each word aloud — students repeat as a group, then individually. Keep the list visible throughout the lesson.
 
-Choose 8 simple words from your vocabulary set for "${topic}". Write them here before class:
+Suggested words for "${topic}" (the same words are on your Flashcards tab — cross out or change any before class):
 
-1. _______________   2. _______________
-3. _______________   4. _______________
-5. _______________   6. _______________
-7. _______________   8. _______________
+${vocabNumbered}
 
 For each word: say it → students repeat → point to a picture or draw a simple image if possible.
 
@@ -1894,31 +1928,672 @@ Thank you for your help today. It makes a real difference.`;
 
       // ---- FLASHCARDS ----
       // Stored as an array of card objects (not a string like other sections)
-      sections['FLASHCARDS'] = generateFlashcardCards(topic, focus);
+      sections['FLASHCARDS'] = generateFlashcardCards(topic);
 
       return sections;
     }
 
     // =============================================
-    // FLASHCARD GENERATOR
-    // Returns an array of { word, sentence } objects
-    // based on the lesson topic and focus area.
-    // Replace or extend this list to suit your topic.
+    // TOPIC VOCABULARY BANK
+    // Eight practical words per lesson topic, each with a short,
+    // natural example sentence and a matching picture (emoji).
+    // Used by the Flashcards tab, the Beginner vocabulary list and
+    // the Lesson Plan vocabulary focus, so all three stay in sync.
+    // To add a topic: add it to TOPICS above and give it 8 cards here.
     // =============================================
 
-    function generateFlashcardCards(topic, focus) {
-      // Eight practical vocabulary cards using the lesson topic.
-      // Teachers can edit these before printing.
-      return [
-        { word: 'appointment',  sentence: `I have an appointment about ${topic}.` },
-        { word: 'information',  sentence: `I need information about ${topic}.` },
-        { word: 'understand',   sentence: `I do not understand. Can you explain ${topic} slowly?` },
-        { word: 'question',     sentence: `I have a question about ${topic}.` },
-        { word: 'help',         sentence: `Can you help me with ${topic}, please?` },
-        { word: 'explain',      sentence: `Please explain this part of ${topic} to me.` },
-        { word: 'important',    sentence: `It is important to know about ${topic}.` },
-        { word: 'address',      sentence: `What is the address? I need to go there for ${topic}.` },
-      ];
+    const TOPIC_VOCAB = {
+      // ---- Health ----
+      'Seeing the Doctor': [
+        ['doctor', 'The doctor will see you now.', '👨‍⚕️'],
+        ['appointment', 'I have an appointment at 10 o’clock.', '📅'],
+        ['receptionist', 'The receptionist asks for my name.', '🧑‍💼'],
+        ['waiting room', 'Please sit in the waiting room.', '🪑'],
+        ['Medicare card', 'Here is my Medicare card.', '💳'],
+        ['sick', 'I feel sick today.', '🤒'],
+        ['check-up', 'I need a check-up.', '🩺'],
+        ['prescription', 'The doctor gives me a prescription.', '💊'],
+      ],
+      'Describing Symptoms': [
+        ['headache', 'I have a headache.', '🤕'],
+        ['fever', 'My child has a fever.', '🤒'],
+        ['cough', 'I have a bad cough.', '😷'],
+        ['sore throat', 'I have a sore throat.', '🗣️'],
+        ['stomach ache', 'I have a stomach ache.', '🤢'],
+        ['dizzy', 'I feel dizzy when I stand up.', '😵'],
+        ['pain', 'The pain is in my back.', '😣'],
+        ['since', 'I have been sick since Monday.', '📅'],
+      ],
+      'Making a Medical Appointment': [
+        ['book', 'I would like to book an appointment.', '📅'],
+        ['available', 'Is the doctor available on Friday?', '🕐'],
+        ['morning', 'Do you have a time in the morning?', '🌅'],
+        ['urgent', 'It is urgent. Can I come today?', '⚠️'],
+        ['new patient', 'I am a new patient.', '🆕'],
+        ['date of birth', 'What is your date of birth?', '🎂'],
+        ['confirm', 'Can you confirm the time, please?', '✅'],
+        ['phone number', 'Can I have your phone number?', '📞'],
+      ],
+      'Asking for Medicine': [
+        ['pharmacy', 'The pharmacy is next to the supermarket.', '🏪'],
+        ['pharmacist', 'I can ask the pharmacist for advice.', '👩‍⚕️'],
+        ['tablets', 'Take two tablets a day.', '💊'],
+        ['dose', 'What is the dose for a child?', '🥄'],
+        ['side effects', 'Are there any side effects?', '⚠️'],
+        ['prescription', 'I have a prescription from my doctor.', '📄'],
+        ['before meals', 'Take this medicine before meals.', '🍽️'],
+        ['allergy', 'I have an allergy to penicillin.', '🤧'],
+      ],
+      'Understanding Medicare': [
+        ['Medicare card', 'Always bring your Medicare card.', '💳'],
+        ['Medicare number', 'What is your Medicare number?', '🔢'],
+        ['bulk billing', 'This clinic does bulk billing.', '🏥'],
+        ['gap fee', 'Is there a gap fee?', '💵'],
+        ['claim', 'I can claim this on Medicare.', '🧾'],
+        ['enrol', 'I need to enrol in Medicare.', '📝'],
+        ['Services Australia', 'Services Australia looks after Medicare.', '🏛️'],
+        ['expiry date', 'Check the expiry date on your card.', '📅'],
+      ],
+
+      // ---- Transport ----
+      'Catching the Train': [
+        ['train', 'The train leaves at 8:15.', '🚆'],
+        ['platform', 'The train is on platform 2.', '🚉'],
+        ['station', 'I walk to the station.', '🏢'],
+        ['Opal card', 'I use my Opal card on the train.', '💳'],
+        ['tap on', 'Tap on when you start your trip.', '👆'],
+        ['tap off', 'Tap off when you finish your trip.', '👋'],
+        ['delay', 'There is a ten-minute delay.', '⏳'],
+        ['change trains', 'Change trains at Central.', '🔁'],
+      ],
+      'Asking for Directions': [
+        ['left', 'Turn left at the bank.', '⬅️'],
+        ['right', 'Turn right at the traffic lights.', '➡️'],
+        ['straight ahead', 'Go straight ahead.', '⬆️'],
+        ['corner', 'The shop is on the corner.', '📐'],
+        ['traffic lights', 'Cross at the traffic lights.', '🚦'],
+        ['opposite', 'The post office is opposite the park.', '↔️'],
+        ['near', 'Is it near here?', '📍'],
+        ['map', 'Can you show me on the map?', '🗺️'],
+      ],
+      'Missing the Bus': [
+        ['bus stop', 'I wait at the bus stop.', '🚏'],
+        ['late', 'I am late for work.', '⏰'],
+        ['next bus', 'When is the next bus?', '🚌'],
+        ['timetable', 'I check the timetable.', '🕒'],
+        ['driver', 'The bus driver is friendly.', '🧑‍✈️'],
+        ['wait', 'I have to wait 20 minutes.', '⏳'],
+        ['missed', 'I missed the bus this morning.', '🏃'],
+        ['app', 'The app shows the bus times.', '📱'],
+      ],
+      'Using an Opal Card': [
+        ['Opal card', 'I use my Opal card on the bus.', '💳'],
+        ['top up', 'I need to top up my card.', '💰'],
+        ['balance', 'My balance is low.', '📉'],
+        ['card reader', 'Tap your card on the card reader.', '📟'],
+        ['concession', 'I have a concession card.', '🎫'],
+        ['fare', 'Off-peak fares are cheaper.', '💵'],
+        ['lost', 'I lost my Opal card.', '❓'],
+        ['register', 'Register your card online.', '📝'],
+      ],
+      'Reading a Timetable': [
+        ['departs', 'The bus departs at 9:05.', '🛫'],
+        ['arrives', 'The train arrives at 9:40.', '🛬'],
+        ['weekdays', 'This timetable is for weekdays.', '📅'],
+        ['weekend', 'There are fewer buses on the weekend.', '📆'],
+        ['every', 'Trains come every 15 minutes.', '🔁'],
+        ['first', 'The first train is at 5 am.', '🌅'],
+        ['last', 'The last bus is at 11 pm.', '🌙'],
+        ['platform', 'Check the platform number.', '🚉'],
+      ],
+
+      // ---- Work ----
+      'Getting a Job': [
+        ['job', 'I am looking for a job.', '💼'],
+        ['resume', 'I wrote my resume.', '📄'],
+        ['apply', 'I want to apply for this job.', '📝'],
+        ['full-time', 'This is a full-time job.', '🕘'],
+        ['part-time', 'I want part-time work.', '🕐'],
+        ['skills', 'I have good computer skills.', '⭐'],
+        ['experience', 'I have three years of experience.', '🧰'],
+        ['reference', 'My old boss is my reference.', '📞'],
+      ],
+      'Job Interview Practice': [
+        ['interview', 'My interview is on Tuesday.', '🤝'],
+        ['on time', 'I always arrive on time.', '⏰'],
+        ['strengths', 'My strengths are teamwork and patience.', '💪'],
+        ['employer', 'The employer asks about my experience.', '👔'],
+        ['reliable', 'I am reliable and hardworking.', '✅'],
+        ['question', 'Do you have any questions for us?', '❓'],
+        ['start date', 'When is the start date?', '📅'],
+        ['shake hands', 'I shake hands and say hello.', '🤝'],
+      ],
+      'Talking About Work Experience': [
+        ['worked', 'I worked in a restaurant for two years.', '🛠️'],
+        ['manager', 'I was a manager in my country.', '👔'],
+        ['responsible', 'I was responsible for the stock.', '📋'],
+        ['team', 'I worked in a team of five.', '👥'],
+        ['customers', 'I served customers every day.', '🛍️'],
+        ['trained', 'I trained new staff.', '🎓'],
+        ['volunteer', 'I volunteer at the community centre.', '🙋'],
+        ['qualification', 'I have a cooking qualification.', '📜'],
+      ],
+      'Asking for Help at Work': [
+        ['supervisor', 'I can ask my supervisor.', '👔'],
+        ['show me', 'Can you show me how to do this?', '👀'],
+        ['again', 'Can you say that again, please?', '🔁'],
+        ['unsure', 'I am unsure about this task.', '🤔'],
+        ['check', 'Can you check my work, please?', '✅'],
+        ['training', 'I need more training.', '🎓'],
+        ['equipment', 'How do I use this equipment?', '🧰'],
+        ['safe', 'Is it safe to do this?', '🦺'],
+      ],
+      'Workplace Instructions': [
+        ['first', 'First, wash your hands.', '1️⃣'],
+        ['then', 'Then, put on your gloves.', '➡️'],
+        ['finally', 'Finally, clean the bench.', '🏁'],
+        ['carefully', 'Lift the box carefully.', '⚠️'],
+        ['sign in', 'Sign in when you arrive.', '✍️'],
+        ['break', 'Your break is at 12 o’clock.', '☕'],
+        ['roster', 'Check the roster for your shifts.', '📅'],
+        ['safety gear', 'Always wear your safety gear.', '🦺'],
+      ],
+
+      // ---- Family ----
+      'Talking About Family': [
+        ['mother', 'My mother lives with us.', '👩'],
+        ['father', 'My father is a farmer.', '👨'],
+        ['brother', 'I have two brothers.', '👦'],
+        ['sister', 'My sister is a nurse.', '👧'],
+        ['husband', 'My husband works at night.', '🤵'],
+        ['wife', 'My wife is a teacher.', '👰'],
+        ['children', 'We have three children.', '👫'],
+        ['grandparents', 'My grandparents are very kind.', '👵'],
+      ],
+      'School Notes from Children': [
+        ['note', 'My son brought a note home.', '📝'],
+        ['permission', 'The school needs my permission.', '🖊️'],
+        ['sign', 'Please sign the form.', '✍️'],
+        ['due', 'The form is due on Friday.', '📅'],
+        ['excursion', 'The class is going on an excursion.', '🚌'],
+        ['uniform', 'Wear sport uniform on Wednesday.', '👕'],
+        ['lunch', 'Pack a lunch and a water bottle.', '🥪'],
+        ['hat', 'Your child needs a hat at school.', '🧢'],
+      ],
+      'Parent–Teacher Meeting': [
+        ['progress', 'How is my child’s progress?', '📈'],
+        ['reading', 'My daughter is good at reading.', '📖'],
+        ['behaviour', 'His behaviour is very good.', '🙂'],
+        ['homework', 'How much homework is there?', '📚'],
+        ['support', 'What support can the school give?', '🤝'],
+        ['report', 'We got the school report.', '📄'],
+        ['interpreter', 'Can I have an interpreter, please?', '🗣️'],
+        ['worried', 'I am worried about maths.', '😟'],
+      ],
+      'Family Routines': [
+        ['wake up', 'We wake up at 6:30.', '⏰'],
+        ['breakfast', 'We eat breakfast together.', '🥣'],
+        ['school run', 'I do the school run at 8:30.', '🚗'],
+        ['cook', 'I cook dinner every night.', '🍳'],
+        ['homework', 'The children do homework after school.', '📚'],
+        ['shower', 'I have a shower in the morning.', '🚿'],
+        ['bedtime', 'Bedtime is at 8 o’clock.', '🛏️'],
+        ['weekend', 'On the weekend we go to the park.', '☀️'],
+      ],
+      'Asking for Childcare Information': [
+        ['childcare', 'I am looking for childcare.', '🧸'],
+        ['preschool', 'My son goes to preschool.', '🎨'],
+        ['enrol', 'How do I enrol my child?', '📝'],
+        ['waiting list', 'Is there a waiting list?', '📋'],
+        ['fees', 'What are the fees per day?', '💵'],
+        ['Child Care Subsidy', 'Can I get the Child Care Subsidy?', '💰'],
+        ['opening hours', 'What are your opening hours?', '🕘'],
+        ['vacancy', 'Do you have a vacancy on Mondays?', '🆓'],
+      ],
+
+      // ---- Community ----
+      'Visiting the Library': [
+        ['library', 'The library is free to join.', '📚'],
+        ['library card', 'I need a library card.', '💳'],
+        ['borrow', 'I want to borrow this book.', '📖'],
+        ['return', 'Return the book in three weeks.', '↩️'],
+        ['due date', 'The due date is on the receipt.', '📅'],
+        ['computer', 'I can use the computer here.', '💻'],
+        ['storytime', 'Storytime is on Tuesday mornings.', '👶'],
+        ['quiet', 'Please be quiet in the library.', '🤫'],
+      ],
+      'Asking for Help at a Service Desk': [
+        ['counter', 'Please go to counter 3.', '🛎️'],
+        ['ticket', 'Take a ticket and wait.', '🎫'],
+        ['queue', 'There is a long queue.', '🧍'],
+        ['form', 'Please fill in this form.', '📋'],
+        ['photo ID', 'Do you have photo ID?', '🪪'],
+        ['proof of address', 'I need proof of address.', '🏠'],
+        ['staff member', 'Ask a staff member for help.', '🧑‍💼'],
+        ['next', 'Next, please!', '👉'],
+      ],
+      'Finding Community Support': [
+        ['community centre', 'The community centre has free classes.', '🏘️'],
+        ['free', 'The English class is free.', '🆓'],
+        ['support worker', 'My support worker helps me.', '🤝'],
+        ['food bank', 'The food bank is open on Thursdays.', '🥫'],
+        ['referral', 'I need a referral.', '📄'],
+        ['contact', 'Who can I contact for help?', '📞'],
+        ['group', 'I joined a women’s group.', '👥'],
+        ['volunteer', 'A volunteer showed me around.', '🙋'],
+      ],
+      'Talking to Council': [
+        ['council', 'The council collects the rubbish.', '🏛️'],
+        ['bins', 'Put the bins out on Tuesday night.', '🗑️'],
+        ['recycling', 'Paper goes in the recycling bin.', '♻️'],
+        ['rates', 'Home owners pay council rates.', '🧾'],
+        ['pick-up', 'I want to book a pick-up for an old sofa.', '🚛'],
+        ['park', 'The council looks after the park.', '🌳'],
+        ['complaint', 'I want to make a complaint.', '📣'],
+        ['noise', 'The noise is very loud at night.', '🔊'],
+      ],
+      'Using an Interpreter': [
+        ['interpreter', 'I need an interpreter, please.', '🗣️'],
+        ['language', 'My language is Dari.', '🌏'],
+        ['slowly', 'Please speak slowly.', '🐢'],
+        ['repeat', 'Can you repeat that, please?', '🔁'],
+        ['understand', 'I do not understand this word.', '🤔'],
+        ['phone', 'The interpreter is on the phone.', '📞'],
+        ['book', 'Can you book an interpreter for my appointment?', '📅'],
+        ['private', 'Is this conversation private?', '🔒'],
+      ],
+
+      // ---- Australian Calendar ----
+      'ANZAC Day': [
+        ['ANZAC Day', 'ANZAC Day is on 25 April.', '📅'],
+        ['ANZAC', 'ANZAC means Australian and New Zealand Army Corps.', '🎖️'],
+        ['remember', 'We remember people who served in war.', '🕯️'],
+        ['dawn service', 'The dawn service starts very early.', '🌅'],
+        ['soldier', 'My neighbour’s grandfather was a soldier.', '🪖'],
+        ['rosemary', 'Some people wear a sprig of rosemary.', '🌿'],
+        ['march', 'There is a march in the city.', '🥁'],
+        ['respect', 'We stand quietly to show respect.', '🙏'],
+      ],
+      'Reconciliation Week': [
+        ['reconciliation', 'Reconciliation Week is from 27 May to 3 June.', '🤝'],
+        ['First Peoples', 'Aboriginal and Torres Strait Islander peoples are Australia’s First Peoples.', '🌏'],
+        ['Traditional Custodians', 'We acknowledge the Traditional Custodians of this land.', '🌿'],
+        ['history', 'We learn about Australian history.', '📜'],
+        ['culture', 'We learn about Aboriginal culture.', '🎨'],
+        ['respect', 'We show respect to Elders.', '🙏'],
+        ['listen', 'It is important to listen and learn.', '👂'],
+        ['together', 'We walk together.', '👣'],
+      ],
+      'Mother’s Day': [
+        ['Mother’s Day', 'Mother’s Day is on the second Sunday in May.', '💐'],
+        ['mum', 'I call my mum on Mother’s Day.', '👩'],
+        ['card', 'The children made a card.', '💌'],
+        ['flowers', 'I bought some flowers.', '🌷'],
+        ['breakfast in bed', 'We made Mum breakfast in bed.', '🥞'],
+        ['present', 'I bought a small present.', '🎁'],
+        ['thank you', 'Thank you for everything, Mum.', '🙏'],
+        ['family lunch', 'We have a family lunch.', '🍽️'],
+      ],
+      'Australia Day': [
+        ['26 January', 'Australia Day is on 26 January.', '📅'],
+        ['public holiday', 'Australia Day is a public holiday.', '🏖️'],
+        ['citizenship', 'Many people become citizens on Australia Day.', '📜'],
+        ['ceremony', 'We went to a citizenship ceremony.', '🎉'],
+        ['barbecue', 'Some families have a barbecue.', '🍖'],
+        ['fireworks', 'There are fireworks in the evening.', '🎆'],
+        ['flag', 'The Australian flag is blue, red and white.', '🇦🇺'],
+        ['different views', 'People have different feelings about this day.', '💬'],
+      ],
+      'Harmony Week': [
+        ['Harmony Week', 'Harmony Week is in March.', '📅'],
+        ['culture', 'Australia has many cultures.', '🌏'],
+        ['welcome', 'Everyone is welcome here.', '👋'],
+        ['orange', 'People wear orange in Harmony Week.', '🧡'],
+        ['diversity', 'Our class has a lot of diversity.', '🌈'],
+        ['respect', 'We respect each other.', '🙏'],
+        ['belong', 'Everyone belongs.', '🏡'],
+        ['share', 'We share food from our cultures.', '🍲'],
+      ],
+
+      // ---- School Communication ----
+      'Calling the School': [
+        ['school office', 'I am calling the school office.', '🏫'],
+        ['principal', 'Can I speak to the principal?', '👩‍🏫'],
+        ['Year 3', 'My son is in Year 3.', '🧑‍🎓'],
+        ['message', 'Can I leave a message?', '💬'],
+        ['call back', 'Please call me back.', '📞'],
+        ['absent', 'My daughter is absent today.', '🏠'],
+        ['pick up', 'I will pick him up early.', '🚗'],
+        ['teacher', 'Who is his teacher?', '👩‍🏫'],
+      ],
+      'Reading a School Note': [
+        ['reminder', 'This is a reminder about photo day.', '🔔'],
+        ['return', 'Return the form by Friday.', '↩️'],
+        ['cost', 'The cost is $15.', '💵'],
+        ['permission', 'Please give permission for your child to go.', '🖊️'],
+        ['assembly', 'The assembly is on Friday at 2 pm.', '🎤'],
+        ['newsletter', 'Read the school newsletter.', '📰'],
+        ['app', 'The school sends notes on an app.', '📱'],
+        ['date', 'Write the date in your calendar.', '📅'],
+      ],
+      'Explaining a Child Is Sick': [
+        ['sick', 'My son is sick today.', '🤒'],
+        ['fever', 'She has a fever.', '🌡️'],
+        ['vomiting', 'He was vomiting last night.', '🤢'],
+        ['rest', 'She needs to rest at home.', '🛌'],
+        ['medical certificate', 'Here is a medical certificate.', '📄'],
+        ['absent', 'He will be absent today.', '🏠'],
+        ['better', 'He is feeling better now.', '🙂'],
+        ['back', 'She will be back on Monday.', '🏫'],
+      ],
+      'Asking About an Excursion': [
+        ['excursion', 'The class is going on an excursion.', '🚌'],
+        ['permission note', 'I signed the permission note.', '📝'],
+        ['cost', 'How much does the excursion cost?', '💵'],
+        ['bring', 'What does my child need to bring?', '🎒'],
+        ['lunch', 'Bring a packed lunch.', '🥪'],
+        ['bus', 'The children go by bus.', '🚌'],
+        ['return time', 'What time will they come back?', '⏰'],
+        ['helper', 'Can parents help on the day?', '🙋'],
+      ],
+      'Talking to a Teacher': [
+        ['teacher', 'I want to talk to the teacher.', '👩‍🏫'],
+        ['meeting', 'Can we have a meeting?', '🤝'],
+        ['worried', 'I am worried about my son.', '😟'],
+        ['friends', 'Does my daughter have friends at school?', '👫'],
+        ['learning', 'How is her learning?', '📚'],
+        ['help at home', 'How can I help at home?', '🏠'],
+        ['extra help', 'Does he need extra help with English?', '🗣️'],
+        ['thank you', 'Thank you for your help.', '🙏'],
+      ],
+
+      // ---- Housing ----
+      'Renting a Home': [
+        ['rent', 'The rent is $500 a week.', '🏘️'],
+        ['real estate agent', 'I called the real estate agent.', '🧑‍💼'],
+        ['inspection', 'The inspection is on Saturday at 10.', '👀'],
+        ['apply', 'I want to apply for this house.', '📝'],
+        ['bedroom', 'I need a two-bedroom unit.', '🛏️'],
+        ['lease', 'The lease is for 12 months.', '📄'],
+        ['bond', 'I need to pay a bond.', '💰'],
+        ['references', 'Do you have rental references?', '📞'],
+      ],
+      'Reporting a Repair': [
+        ['repair', 'I need to report a repair.', '🔧'],
+        ['broken', 'The heater is broken.', '💔'],
+        ['leak', 'There is a leak under the sink.', '💧'],
+        ['urgent', 'No hot water is an urgent repair.', '⚠️'],
+        ['photo', 'I took a photo of the problem.', '📷'],
+        ['email', 'I will send an email to the agent.', '📧'],
+        ['tradesperson', 'When will the tradesperson come?', '👷'],
+        ['fixed', 'Is it fixed yet?', '✅'],
+      ],
+      'Talking to a Landlord': [
+        ['landlord', 'I need to talk to my landlord.', '🔑'],
+        ['rent increase', 'The landlord wants to increase the rent.', '📈'],
+        ['notice', 'I got a notice in the mail.', '📄'],
+        ['agreement', 'We have a rental agreement.', '🤝'],
+        ['fortnight', 'I pay the rent every fortnight.', '💳'],
+        ['problem', 'There is a problem with the window.', '⚠️'],
+        ['neighbours', 'The neighbours are very friendly.', '🏘️'],
+        ['spare key', 'Can I have a spare key?', '🗝️'],
+      ],
+      'Understanding a Lease': [
+        ['lease', 'Read the lease before you sign.', '📄'],
+        ['fixed term', 'This is a 12-month fixed term.', '📆'],
+        ['sign', 'Sign here, please.', '✍️'],
+        ['condition report', 'Check the condition report carefully.', '📋'],
+        ['rules', 'Read the rules about pets.', '📏'],
+        ['tenant', 'I am the tenant.', '🧑'],
+        ['end date', 'What is the end date of the lease?', '📅'],
+        ['break the lease', 'There is a fee to break the lease.', '💔'],
+      ],
+      'Bond and Moving Out': [
+        ['bond', 'I paid a bond when I moved in.', '💰'],
+        ['refund', 'I want my bond refund.', '💸'],
+        ['clean', 'Clean the house before you leave.', '🧽'],
+        ['final inspection', 'The final inspection is on Friday.', '👀'],
+        ['damage', 'Is there any damage?', '🔨'],
+        ['keys', 'I gave the keys back to the agent.', '🔑'],
+        ['Fair Trading', 'In NSW, the bond is held by Fair Trading.', '🏛️'],
+        ['new address', 'Here is my new address.', '📬'],
+      ],
+
+      // ---- Appointments ----
+      'Making an Appointment': [
+        ['appointment', 'I would like to make an appointment.', '📅'],
+        ['available', 'When are you available?', '🗓️'],
+        ['book', 'Can I book for next Tuesday?', '📝'],
+        ['time', 'What time is good for you?', '🕐'],
+        ['date', 'What date is the appointment?', '📆'],
+        ['name', 'Can I have your name, please?', '📛'],
+        ['reminder', 'You will get a text reminder.', '🔔'],
+        ['confirm', 'I want to confirm my appointment.', '✅'],
+      ],
+      'Changing an Appointment': [
+        ['change', 'I need to change my appointment.', '🔁'],
+        ['reschedule', 'Can I reschedule to Thursday?', '📅'],
+        ['earlier', 'Do you have an earlier time?', '⏪'],
+        ['later', 'Is there a later time?', '⏩'],
+        ['instead', 'Can I come on Monday instead?', '🔄'],
+        ['sorry', 'Sorry, I can’t come on Friday.', '🙇'],
+        ['still free', 'Is 3 pm still free?', '🆓'],
+        ['new time', 'Can you tell me the new time?', '🕐'],
+      ],
+      'Cancelling an Appointment': [
+        ['cancel', 'I need to cancel my appointment.', '❌'],
+        ['notice', 'Please give 24 hours’ notice.', '⏳'],
+        ['cancellation fee', 'Is there a cancellation fee?', '💵'],
+        ['reason', 'I am sick, so I can’t come.', '💬'],
+        ['unable', 'I am unable to come tomorrow.', '🚫'],
+        ['rebook', 'Can I rebook for next week?', '📅'],
+        ['text message', 'I got a text message about my appointment.', '📱'],
+        ['thank you', 'Thank you for your help.', '🙏'],
+      ],
+      'Asking for the Time and Date': [
+        ['o’clock', 'It is three o’clock.', '🕒'],
+        ['half past', 'The class starts at half past nine.', '🕤'],
+        ['quarter to', 'It is quarter to ten.', '🕘'],
+        ['today', 'What is the date today?', '📅'],
+        ['tomorrow', 'See you tomorrow.', '➡️'],
+        ['Monday', 'My appointment is on Monday.', '🗓️'],
+        ['afternoon', 'Is it in the morning or the afternoon?', '🌤️'],
+        ['what time', 'Excuse me, what time is it?', '⌚'],
+      ],
+      'Phone Booking Practice': [
+        ['hello', 'Hello, this is Maria speaking.', '👋'],
+        ['booking', 'I want to make a booking.', '📅'],
+        ['spell', 'Can you spell that, please?', '🔤'],
+        ['hold', 'Please hold.', '📞'],
+        ['slowly', 'Can you speak slowly, please?', '🐢'],
+        ['repeat', 'Can you repeat that, please?', '🔁'],
+        ['phone number', 'What is your phone number?', '🔢'],
+        ['goodbye', 'Thank you. Goodbye.', '👋'],
+      ],
+
+      // ---- Shopping ----
+      'Buying Groceries': [
+        ['supermarket', 'I go to the supermarket on Saturday.', '🛒'],
+        ['trolley', 'I need a trolley.', '🛒'],
+        ['aisle', 'The rice is in aisle 5.', '🏬'],
+        ['fruit', 'I buy fruit every week.', '🍎'],
+        ['vegetables', 'The vegetables are fresh.', '🥦'],
+        ['on special', 'Bread is on special this week.', '🏷️'],
+        ['checkout', 'Pay at the checkout.', '💳'],
+        ['bag', 'Do you need a bag?', '🛍️'],
+      ],
+      'Returning an Item': [
+        ['return', 'I want to return this shirt.', '↩️'],
+        ['receipt', 'Here is my receipt.', '🧾'],
+        ['faulty', 'The kettle is faulty.', '⚠️'],
+        ['exchange', 'Can I exchange it for a bigger size?', '🔄'],
+        ['size', 'It is the wrong size.', '📏'],
+        ['refund', 'Can I have a refund?', '💸'],
+        ['store credit', 'They gave me store credit.', '🎟️'],
+        ['manager', 'Can I speak to the manager?', '👔'],
+      ],
+      'Asking About Prices': [
+        ['how much', 'How much is this?', '💵'],
+        ['price tag', 'There is no price tag.', '🏷️'],
+        ['cheap', 'These shoes are cheap.', '👍'],
+        ['expensive', 'That TV is too expensive.', '💲'],
+        ['discount', 'Is there a discount?', '🏷️'],
+        ['per kilo', 'Tomatoes are $5 per kilo.', '⚖️'],
+        ['total', 'What is the total?', '🧮'],
+        ['cash or card', 'Cash or card?', '💳'],
+      ],
+      'Reading a Receipt': [
+        ['receipt', 'Keep your receipt.', '🧾'],
+        ['total', 'The total is $42.50.', '🧮'],
+        ['GST', 'The price includes GST.', '🧾'],
+        ['change', 'Here is your change.', '🪙'],
+        ['date', 'The date is on the receipt.', '📅'],
+        ['item', 'Check each item on the receipt.', '🛍️'],
+        ['card payment', 'I paid by card.', '💳'],
+        ['mistake', 'There is a mistake on my receipt.', '❌'],
+      ],
+      'Asking for a Refund': [
+        ['refund', 'I would like a refund, please.', '💸'],
+        ['faulty', 'This phone is faulty.', '⚠️'],
+        ['broken', 'It was broken when I opened it.', '💔'],
+        ['receipt', 'I have the receipt.', '🧾'],
+        ['proof of purchase', 'Do you have proof of purchase?', '📄'],
+        ['refund policy', 'What is your refund policy?', '📋'],
+        ['customer service', 'Please go to customer service.', '🛎️'],
+        ['warranty', 'It has a one-year warranty.', '🛡️'],
+      ],
+
+      // ---- Workplace Confidence ----
+      'Asking the Boss a Question': [
+        ['boss', 'I need to ask my boss a question.', '👔'],
+        ['excuse me', 'Excuse me, can I ask a question?', '🙋'],
+        ['a minute', 'Do you have a minute?', '⏱️'],
+        ['clarify', 'Can I clarify something?', '💬'],
+        ['day off', 'Can I have Friday off?', '🏖️'],
+        ['swap', 'Can I swap my shift?', '🔄'],
+        ['pay', 'I have a question about my pay.', '💵'],
+        ['thanks', 'Thanks for your time.', '🙏'],
+      ],
+      'Saying I Don’t Understand': [
+        ['understand', 'Sorry, I don’t understand.', '🤔'],
+        ['repeat', 'Can you repeat that, please?', '🔁'],
+        ['slowly', 'Can you speak more slowly?', '🐢'],
+        ['mean', 'What does this word mean?', '❓'],
+        ['example', 'Can you give me an example?', '💡'],
+        ['write it down', 'Can you write it down, please?', '✍️'],
+        ['check', 'Let me check I understand.', '✅'],
+        ['again', 'Can you show me again?', '👀'],
+      ],
+      'Following Instructions': [
+        ['step', 'Do one step at a time.', '👣'],
+        ['first', 'First, read the sign.', '1️⃣'],
+        ['next', 'Next, turn on the machine.', '➡️'],
+        ['after that', 'After that, check the label.', '🔜'],
+        ['finally', 'Finally, put it on the shelf.', '🏁'],
+        ['carefully', 'Listen carefully.', '👂'],
+        ['finish', 'Tell me when you finish.', '✅'],
+        ['show me', 'Can you show me how?', '👀'],
+      ],
+      'Reporting a Problem': [
+        ['problem', 'There is a problem with the machine.', '⚠️'],
+        ['broken', 'The ladder is broken.', '💔'],
+        ['spill', 'There is a spill on the floor.', '💦'],
+        ['hurt', 'I hurt my hand.', '🤕'],
+        ['report', 'I need to report a problem.', '📣'],
+        ['safety', 'Safety comes first.', '🦺'],
+        ['incident form', 'Please fill in an incident form.', '📋'],
+        ['supervisor', 'I told my supervisor straight away.', '👔'],
+      ],
+      'Talking About Availability': [
+        ['available', 'I am available on weekdays.', '📅'],
+        ['roster', 'Please put me on the roster.', '🗓️'],
+        ['shift', 'I can do the morning shift.', '🕘'],
+        ['weekend', 'I can work on the weekend.', '☀️'],
+        ['morning', 'I prefer to work in the morning.', '🌅'],
+        ['evening', 'I can’t work in the evening.', '🌆'],
+        ['flexible', 'My hours are flexible.', '🤸'],
+        ['days off', 'My days off are Sunday and Monday.', '🏖️'],
+      ],
+
+      // ---- Everyday Conversation ----
+      'Greetings and Introductions': [
+        ['hello', 'Hello! How are you?', '👋'],
+        ['name', 'My name is Sam.', '📛'],
+        ['from', 'Where are you from?', '🌏'],
+        ['nice to meet you', 'Nice to meet you.', '🤝'],
+        ['fine', 'I am fine, thank you.', '👍'],
+        ['live', 'Where do you live?', '🏠'],
+        ['this is', 'This is my friend, Lina.', '🙋'],
+        ['see you', 'See you next week!', '👋'],
+      ],
+      'Talking About the Weather': [
+        ['weather', 'What is the weather like today?', '🌤️'],
+        ['sunny', 'It is sunny today.', '☀️'],
+        ['rain', 'It might rain this afternoon.', '🌧️'],
+        ['hot', 'It is very hot in summer.', '🥵'],
+        ['cold', 'It is cold in winter.', '🥶'],
+        ['windy', 'It is windy today.', '💨'],
+        ['umbrella', 'Take an umbrella.', '☂️'],
+        ['forecast', 'The forecast says 30 degrees.', '📺'],
+      ],
+      'Weekend Conversation': [
+        ['weekend', 'How was your weekend?', '☀️'],
+        ['Saturday', 'On Saturday I went shopping.', '🗓️'],
+        ['relax', 'I like to relax on Sunday.', '🛋️'],
+        ['visit', 'We visited my cousin.', '🚗'],
+        ['park', 'We had a picnic in the park.', '🌳'],
+        ['market', 'We went to the market.', '🧺'],
+        ['plans', 'What are your plans for the weekend?', '📝'],
+        ['fun', 'Did you have a fun weekend?', '🎉'],
+      ],
+      'Making Small Talk': [
+        ['small talk', 'Small talk is a short, friendly chat.', '💬'],
+        ['busy', 'Have you been busy this week?', '🏃'],
+        ['lovely', 'It’s a lovely day.', '🌸'],
+        ['how was', 'How was your day?', '☕'],
+        ['really', 'Really? That’s great!', '😮'],
+        ['me too', 'Me too!', '🤝'],
+        ['catch up', 'Let’s catch up soon.', '📞'],
+        ['see you later', 'See you later!', '👋'],
+      ],
+      'Asking for Help': [
+        ['help', 'Can you help me, please?', '🙋'],
+        ['excuse me', 'Excuse me, can you help me?', '👋'],
+        ['could you', 'Could you open the door, please?', '🙏'],
+        ['where', 'Where is the toilet?', '📍'],
+        ['lost', 'I am lost.', '🧭'],
+        ['carry', 'Can you help me carry this?', '📦'],
+        ['show me', 'Can you show me the way?', '👀'],
+        ['thank you', 'Thank you so much.', '🙏'],
+      ],
+    };
+
+    // Used only if a topic has no entry in TOPIC_VOCAB.
+    // Sentences deliberately do not repeat the topic name.
+    const GENERAL_VOCAB = [
+      ['help', 'Can you help me, please?', '🙋'],
+      ['question', 'I have a question.', '❓'],
+      ['understand', 'Sorry, I don’t understand.', '🤔'],
+      ['repeat', 'Can you repeat that, please?', '🔁'],
+      ['slowly', 'Can you speak slowly, please?', '🐢'],
+      ['explain', 'Can you explain that again?', '💬'],
+      ['information', 'Where can I get more information?', 'ℹ️'],
+      ['thank you', 'Thank you for your help.', '🙏'],
+    ];
+
+    function getTopicVocab(topic) {
+      const list = TOPIC_VOCAB[topic] || GENERAL_VOCAB;
+      return list.map(([word, sentence, emoji]) => ({ word, sentence, emoji }));
+    }
+
+    // =============================================
+    // FLASHCARD GENERATOR
+    // Returns an array of { word, sentence, emoji } objects
+    // for the lesson topic. Teachers can edit before printing.
+    // =============================================
+
+    function generateFlashcardCards(topic) {
+      return getTopicVocab(topic);
     }
 
     // =============================================
@@ -2022,7 +2697,7 @@ Thank you for your help today. It makes a real difference.`;
     function buildFlashcardsPanel(tab, cards) {
       let cardsHTML = '';
       cards.forEach(card => {
-        const emoji = getFlashcardEmoji(card.word);
+        const emoji = card.emoji || getFlashcardEmoji(card.word);
         cardsHTML += `
           <div class="flashcard">
             <div class="flashcard-image-box" aria-hidden="true">
@@ -2159,17 +2834,34 @@ Thank you for your help today. It makes a real difference.`;
       // Wire up tab events
       wireTabEvents();
 
-      // Wire up reflection autosave
+      // Wire up reflection: restore, prefill headings, autosave as you type
       const reflectionTextarea = document.getElementById('reflection-textarea');
       if (reflectionTextarea) {
-        const saved = localStorage.getItem(LS_REFLECTION);
-        if (saved) {
-          reflectionTextarea.value = saved;
-        }
-        reflectionTextarea.addEventListener('blur', () => {
-          localStorage.setItem(LS_REFLECTION, reflectionTextarea.value);
-          showToast('Reflection saved');
+        const key = reflectionKey(topic);
+        const saved = loadReflection(topic);
+        reflectionTextarea.value = saved !== null ? saved : REFLECTION_TEMPLATE;
+        syncReflectionPrint();
+
+        let saveTimer = null;
+        let lastSaved = reflectionTextarea.value;
+        const save = (announce) => {
+          if (saveTimer) { clearTimeout(saveTimer); saveTimer = null; }
+          syncReflectionPrint();
+          if (reflectionTextarea.value === lastSaved) return;
+          if (safeSetItem(key, reflectionTextarea.value)) {
+            lastSaved = reflectionTextarea.value;
+            if (announce) showToast('Reflection saved');
+          } else if (announce) {
+            showToast('Could not save notes in this browser — copy or print them before leaving.');
+          }
+        };
+        reflectionTextarea.addEventListener('input', () => {
+          syncReflectionPrint();
+          if (saveTimer) clearTimeout(saveTimer);
+          saveTimer = setTimeout(() => save(false), 400);
         });
+        reflectionTextarea.addEventListener('blur', () => save(true));
+        window.addEventListener('pagehide', () => save(false));
       }
 
       // Wire up per-tab Print, Copy, and Open Printable View buttons
@@ -2249,6 +2941,41 @@ Students needing extra support:
 Notes for next lesson:
 `;
 
+    // Reflection notes are stored per lesson topic so a new lesson
+    // doesn't show (or overwrite) notes from a different topic.
+    function reflectionKey(topic) {
+      return `${LS_REFLECTION}::${topic || 'general'}`;
+    }
+
+    function loadReflection(topic) {
+      try {
+        const perTopic = localStorage.getItem(reflectionKey(topic));
+        if (perTopic !== null) return perTopic;
+        // One-time migration of notes saved by the older single-key version:
+        // move them to the first topic opened so they aren't lost.
+        const legacy = localStorage.getItem(LS_REFLECTION);
+        if (legacy) {
+          localStorage.setItem(reflectionKey(topic), legacy);
+          localStorage.removeItem(LS_REFLECTION);
+          return legacy;
+        }
+      } catch (e) { /* storage blocked — fall through */ }
+      return null;
+    }
+
+    function safeSetItem(key, value) {
+      try { localStorage.setItem(key, value); return true; }
+      catch (e) { return false; }
+    }
+
+    // Mirror the textarea into a plain block for printing. Printed
+    // textareas are clipped to their box, so print uses this instead.
+    function syncReflectionPrint() {
+      const ta = document.getElementById('reflection-textarea');
+      const out = document.getElementById('reflection-print');
+      if (ta && out) out.textContent = ta.value;
+    }
+
     function buildReflectionPanel() {
       return `
         <div class="tab-panel-card">
@@ -2261,10 +2988,10 @@ Notes for next lesson:
           <textarea
             class="reflection-textarea"
             id="reflection-textarea"
-            placeholder="${REFLECTION_TEMPLATE}"
             aria-label="Lesson reflection notes"
           ></textarea>
-          <p class="reflection-note">Your notes are saved automatically to this browser when you click outside the box.</p>
+          <div class="reflection-print" id="reflection-print"></div>
+          <p class="reflection-note">Type under each heading. Your notes save automatically in this browser as you type (one set of notes per lesson topic) and are included when you print.</p>
         </div>
       `;
     }
@@ -2306,6 +3033,7 @@ Notes for next lesson:
     function printTab(tabId, tabLabel, topic) {
       const panel = document.getElementById(`panel-${tabId}`);
       if (!panel) return;
+      if (tabId === 'reflection') syncReflectionPrint();
 
       const existingPrintHeader = panel.querySelector('.print-header');
       if (existingPrintHeader) existingPrintHeader.remove();
@@ -2501,7 +3229,7 @@ Notes for next lesson:
     .flashcard-sentence {
       font-style: italic; color: #6b7280; font-size: 0.78rem; line-height: 1.4;
     }
-    .reflection-textarea, .reflection-note { display: none; }
+    .reflection-textarea, .reflection-note, .reflection-print { display: none; }
     ${pageRule}
     @media print {
       .pv-toolbar, .pv-header { display: none; }
@@ -2907,6 +3635,8 @@ Notes for next lesson:
         showToast('Free trial counter reset for testing.');
       });
     })();
+
+    window.addEventListener('beforeprint', syncReflectionPrint);
 
     function init() {
       restoreFormFromStorage();
