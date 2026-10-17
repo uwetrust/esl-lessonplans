@@ -748,6 +748,43 @@
     /* =============================================
        FLASHCARD STYLES (screen)
     ============================================= */
+    .flashcard-level-set {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0;
+      width: 100%;
+    }
+
+    @media (max-width: 600px) {
+      .flashcard-level-set {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    .flashcard-level-toggle {
+      display: flex;
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+    }
+
+    .flashcard-level-btn {
+      padding: 0.35rem 1rem;
+      border: 2px solid var(--teal);
+      border-radius: 20px;
+      background: transparent;
+      color: var(--teal);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.15s, color 0.15s;
+    }
+
+    .flashcard-level-btn.active {
+      background: var(--teal);
+      color: #fff;
+    }
+
     .flashcard-intro {
       font-size: 0.85rem;
       color: var(--text-muted);
@@ -756,9 +793,7 @@
     }
 
     .flashcard-grid {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 0;
+      display: block;
       background: #e2e8f0;
       padding: 1rem;
       border-radius: 12px;
@@ -775,14 +810,31 @@
     }
 
     .flashcard-image-box {
-      background: #f1f5f9;
-      border-radius: 4px;
+      background: #e2e8f0;
+      border-radius: 6px;
       width: 100%;
       aspect-ratio: 4 / 3;
       display: flex;
       align-items: center;
       justify-content: center;
       margin-bottom: 0.6rem;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .flashcard-photo {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 6px;
+      display: block;
+    }
+
+    .flashcard-photo-loading {
+      font-size: 2rem;
+      line-height: 1;
+      text-align: center;
+      opacity: 0.5;
     }
 
     .flashcard-emoji {
@@ -811,12 +863,6 @@
       text-align: center;
       font-style: italic;
       line-height: 1.4;
-    }
-
-    @media (max-width: 600px) {
-      .flashcard-grid {
-        grid-template-columns: repeat(2, 1fr);
-      }
     }
 
     /* =============================================
@@ -893,16 +939,23 @@
       #panel-flashcards .print-header p  { font-size: 0.85rem; }
 
       .flashcard-grid {
-        display: grid !important;
-        grid-template-columns: repeat(4, 1fr) !important;
-        grid-template-rows: repeat(2, 1fr) !important;
-        gap: 0 !important;
+        display: block !important;
         background: #ffffff !important;
         padding: 0 !important;
         border-radius: 0 !important;
         width: 100%;
+      }
+
+      .flashcard-level-set {
+        display: grid !important;
+        grid-template-columns: repeat(4, 1fr) !important;
+        grid-template-rows: repeat(2, 1fr) !important;
+        gap: 0 !important;
+        width: 100%;
         height: 168mm;
       }
+
+      .flashcard-level-toggle { display: none !important; }
 
       .flashcard {
         background: #ffffff !important;
@@ -921,7 +974,7 @@
       }
 
       .flashcard-image-box {
-        background: #f1f5f9 !important;
+        background: #e2e8f0 !important;
         border-radius: 3px !important;
         width: 100%;
         aspect-ratio: 4 / 3;
@@ -929,6 +982,15 @@
         align-items: center;
         justify-content: center;
         margin-bottom: 3mm;
+        overflow: hidden;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+      }
+
+      .flashcard-photo {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
         -webkit-print-color-adjust: exact;
         print-color-adjust: exact;
       }
@@ -1900,25 +1962,269 @@ Thank you for your help today. It makes a real difference.`;
     }
 
     // =============================================
-    // FLASHCARD GENERATOR
-    // Returns an array of { word, sentence } objects
-    // based on the lesson topic and focus area.
-    // Replace or extend this list to suit your topic.
+    // FLASHCARD GENERATOR — topic-aware vocabulary
+    // Returns an array of { word, sentence, photoQuery } objects.
+    // Words and sentences are chosen based on the topic keyword.
+    // photoQuery is the search term sent to Unsplash.
     // =============================================
 
+    const TOPIC_VOCAB = {
+      // Health
+      health:       [
+        { word: 'doctor',       sentenceA1: 'I see a doctor.',                                       sentenceB1: 'I need to make an appointment to see a doctor.',               photoQuery: 'doctor patient' },
+        { word: 'medicine',     sentenceA1: 'I take medicine every day.',                            sentenceB1: 'The doctor prescribed medicine for my condition.',              photoQuery: 'medicine pills' },
+        { word: 'hospital',     sentenceA1: 'I go to the hospital.',                                 sentenceB1: 'The hospital has an emergency department open 24 hours.',       photoQuery: 'hospital building' },
+        { word: 'appointment',  sentenceA1: 'I have an appointment.',                                sentenceB1: 'I need to book an appointment at the clinic.',                  photoQuery: 'calendar appointment' },
+        { word: 'prescription', sentenceA1: 'I have a prescription.',                                sentenceB1: 'You need a prescription from the doctor to get this medicine.', photoQuery: 'prescription pharmacy' },
+        { word: 'symptom',      sentenceA1: 'I feel sick.',                                          sentenceB1: 'Describe your symptoms clearly when you see the doctor.',       photoQuery: 'sick person' },
+        { word: 'pharmacy',     sentenceA1: 'I go to the pharmacy.',                                 sentenceB1: 'Take your prescription to the pharmacy to collect your medicine.', photoQuery: 'pharmacy store' },
+        { word: 'emergency',    sentenceA1: 'Call 000.',                                             sentenceB1: 'Call triple zero immediately if it is a medical emergency.',    photoQuery: 'ambulance emergency' },
+      ],
+      doctor:       'health',
+      hospital:     'health',
+      medical:      'health',
+      medicare:     'health',
+
+      // Transport
+      transport:    [
+        { word: 'ticket',       sentence: 'I need to buy a ticket before I get on.',         photoQuery: 'train ticket' },
+        { word: 'timetable',    sentence: 'Check the timetable before you leave.',           photoQuery: 'train timetable' },
+        { word: 'platform',     sentence: 'The train leaves from platform 3.',               photoQuery: 'train platform' },
+        { word: 'bus',          sentence: 'The bus stops outside the school.',               photoQuery: 'city bus stop' },
+        { word: 'station',      sentence: 'I will meet you at the station.',                 photoQuery: 'train station' },
+        { word: 'directions',   sentence: 'Can you give me directions to the library?',     photoQuery: 'map directions' },
+        { word: 'opal card',    sentence: 'Tap your Opal card when you get on.',            photoQuery: 'transit card' },
+        { word: 'delay',        sentence: 'There is a delay — the train is 10 minutes late.', photoQuery: 'waiting train' },
+      ],
+      bus:          'transport',
+      train:        'transport',
+      opal:         'transport',
+      travel:       'transport',
+
+      // Shopping
+      shopping:     [
+        { word: 'price',        sentence: 'What is the price of this item?',                 photoQuery: 'shopping price tag' },
+        { word: 'receipt',      sentence: 'Keep your receipt in case you need to return it.', photoQuery: 'shopping receipt' },
+        { word: 'checkout',     sentence: 'I will pay at the checkout.',                     photoQuery: 'supermarket checkout' },
+        { word: 'refund',       sentence: 'I would like a refund for this item.',            photoQuery: 'refund money' },
+        { word: 'discount',     sentence: 'This item is on sale — 20% discount.',            photoQuery: 'sale discount' },
+        { word: 'grocery',      sentence: 'I buy groceries at the supermarket.',             photoQuery: 'grocery store' },
+        { word: 'aisle',        sentence: 'The bread is in aisle 3.',                        photoQuery: 'supermarket aisle' },
+        { word: 'self-serve',   sentence: 'Use the self-serve machine to pay.',              photoQuery: 'self checkout machine' },
+      ],
+      supermarket:  'shopping',
+      groceries:    'shopping',
+      store:        'shopping',
+      market:       'shopping',
+
+      // Banking / money
+      banking:      [
+        { word: 'account',      sentence: 'I need to open a bank account.',                  photoQuery: 'bank building' },
+        { word: 'transfer',     sentence: 'I can transfer money online.',                    photoQuery: 'bank transfer' },
+        { word: 'deposit',      sentence: 'I will deposit money into my account.',           photoQuery: 'atm machine' },
+        { word: 'withdrawal',   sentence: 'I made a withdrawal from the ATM.',              photoQuery: 'atm cash' },
+        { word: 'statement',    sentence: 'Check your bank statement every month.',          photoQuery: 'bank statement' },
+        { word: 'interest',     sentence: 'A savings account earns interest.',               photoQuery: 'savings coins' },
+        { word: 'PIN',          sentence: 'Do not share your PIN with anyone.',              photoQuery: 'card payment' },
+        { word: 'budget',       sentence: 'Make a budget to manage your money.',             photoQuery: 'budget planning' },
+      ],
+      bank:         'banking',
+      money:        'banking',
+      finance:      'banking',
+
+      // Housing
+      housing:      [
+        { word: 'lease',        sentence: 'Read the lease before you sign it.',              photoQuery: 'rental agreement' },
+        { word: 'landlord',     sentence: 'Call the landlord if something is broken.',       photoQuery: 'house keys' },
+        { word: 'rent',         sentence: 'Pay your rent on time each week.',                photoQuery: 'apartment building' },
+        { word: 'bond',         sentence: 'You pay a bond at the start of the tenancy.',    photoQuery: 'moving house' },
+        { word: 'inspection',   sentence: 'The landlord will do a house inspection.',        photoQuery: 'house inspection' },
+        { word: 'utility',      sentence: 'Water and electricity are utilities.',            photoQuery: 'electricity meter' },
+        { word: 'repairs',      sentence: 'The landlord is responsible for repairs.',        photoQuery: 'home repair' },
+        { word: 'notice',       sentence: 'Give four weeks notice before you leave.',        photoQuery: 'notice letter' },
+      ],
+      rent:         'housing',
+      apartment:    'housing',
+      house:        'housing',
+      rental:       'housing',
+
+      // School / education
+      school:       [
+        { word: 'enrolment',    sentence: 'Enrolment forms must be submitted by Friday.',    photoQuery: 'school enrolment' },
+        { word: 'uniform',      sentence: 'Students must wear the school uniform.',          photoQuery: 'school uniform' },
+        { word: 'homework',     sentence: 'My child brings homework home every day.',        photoQuery: 'child homework' },
+        { word: 'teacher',      sentence: 'The teacher explains new words clearly.',         photoQuery: 'teacher classroom' },
+        { word: 'report',       sentence: 'I received my child\'s school report.',           photoQuery: 'school report' },
+        { word: 'excursion',    sentence: 'The class is going on an excursion tomorrow.',    photoQuery: 'school excursion bus' },
+        { word: 'assembly',     sentence: 'We have assembly every Monday morning.',          photoQuery: 'school assembly' },
+        { word: 'canteen',      sentence: 'Students can buy lunch at the canteen.',          photoQuery: 'school canteen' },
+      ],
+      education:    'school',
+      classroom:    'school',
+      kindergarten: 'school',
+
+      // Work
+      work:         [
+        { word: 'resume',       sentence: 'I need to update my resume before applying.',     photoQuery: 'resume job' },
+        { word: 'interview',    sentence: 'I have a job interview on Thursday.',             photoQuery: 'job interview' },
+        { word: 'payslip',      sentence: 'Check your payslip every fortnight.',             photoQuery: 'payslip' },
+        { word: 'shift',        sentence: 'My shift starts at 7am.',                         photoQuery: 'work shift' },
+        { word: 'supervisor',   sentence: 'Tell your supervisor if you feel unwell.',        photoQuery: 'manager office' },
+        { word: 'overtime',     sentence: 'I worked overtime this week.',                    photoQuery: 'working overtime' },
+        { word: 'rights',       sentence: 'Know your rights as a worker in Australia.',      photoQuery: 'workers rights' },
+        { word: 'Fair Work',    sentence: 'Fair Work sets minimum wages in Australia.',      photoQuery: 'workplace meeting' },
+      ],
+      job:          'work',
+      employment:   'work',
+      workplace:    'work',
+
+      // Citizenship / government
+      citizenship:  [
+        { word: 'application',  sentence: 'I submitted my citizenship application.',         photoQuery: 'application form' },
+        { word: 'ceremony',     sentence: 'The citizenship ceremony is on Australia Day.',   photoQuery: 'citizenship ceremony' },
+        { word: 'passport',     sentence: 'I renewed my passport last month.',               photoQuery: 'passport document' },
+        { word: 'visa',         sentence: 'My visa expires next year.',                      photoQuery: 'visa document' },
+        { word: 'residency',    sentence: 'I applied for permanent residency.',              photoQuery: 'permanent resident' },
+        { word: 'rights',       sentence: 'As a citizen, I have the right to vote.',        photoQuery: 'voting ballot' },
+        { word: 'pledge',       sentence: 'I made a pledge at my citizenship ceremony.',     photoQuery: 'australia flag' },
+        { word: 'community',    sentence: 'I am proud to be part of this community.',        photoQuery: 'diverse community' },
+      ],
+      visa:         'citizenship',
+      immigration:  'citizenship',
+      australia:    'citizenship',
+
+      // Family / parenting
+      family:       [
+        { word: 'mother',       sentenceA1: 'My mother is kind.',                                    sentenceB1: 'My mother works hard to look after our family.',                photoQuery: 'mother child' },
+        { word: 'celebrate',    sentenceA1: 'We celebrate today.',                                   sentenceB1: 'We celebrate Mother\'s Day to show our love and gratitude.',    photoQuery: 'family celebrate' },
+        { word: 'gift',         sentenceA1: 'I give a gift.',                                        sentenceB1: 'I bought a special gift to show my mother I appreciate her.',   photoQuery: 'gift flowers' },
+        { word: 'grateful',     sentenceA1: 'I am grateful.',                                        sentenceB1: 'I am grateful for everything my mother has sacrificed for me.', photoQuery: 'gratitude flowers' },
+        { word: 'care',         sentenceA1: 'She cares for us.',                                     sentenceB1: 'Mothers show care and love in so many different ways.',          photoQuery: 'mother caring' },
+        { word: 'tradition',    sentenceA1: 'This is a tradition.',                                  sentenceB1: 'Giving flowers is a tradition in many cultures on Mother\'s Day.', photoQuery: 'family tradition' },
+        { word: 'special',      sentenceA1: 'Today is special.',                                     sentenceB1: 'This is a special occasion to honour the women in our lives.',   photoQuery: 'special occasion family' },
+        { word: 'appreciate',   sentenceA1: 'I say thank you.',                                      sentenceB1: 'It is important to appreciate the people who support you.',      photoQuery: 'appreciation hug' },
+      ],
+      parents:      'family',
+      parenting:    'family',
+      mother:       'family',
+      father:       'family',
+      children:     'family',
+
+      // Holidays / celebrations
+      christmas:    [
+        { word: 'gift',         sentence: 'We give gifts to family at Christmas.',           photoQuery: 'christmas gift' },
+        { word: 'carols',       sentence: 'We sing Christmas carols together.',              photoQuery: 'christmas carols' },
+        { word: 'decorations',  sentence: 'We put decorations on the Christmas tree.',       photoQuery: 'christmas decorations' },
+        { word: 'holiday',      sentence: 'Christmas is a public holiday in Australia.',     photoQuery: 'christmas holiday' },
+        { word: 'feast',        sentence: 'We share a big feast with family.',               photoQuery: 'christmas dinner' },
+        { word: 'tradition',    sentence: 'Giving gifts is a Christmas tradition.',          photoQuery: 'christmas tradition' },
+        { word: 'nativity',     sentence: 'The nativity tells the story of Jesus\' birth.', photoQuery: 'nativity scene' },
+        { word: 'greeting',     sentence: 'I sent a Christmas greeting card to my friend.', photoQuery: 'christmas card' },
+      ],
+      easter:       [
+        { word: 'chocolate',    sentence: 'Children get chocolate eggs at Easter.',          photoQuery: 'easter chocolate eggs' },
+        { word: 'resurrection', sentence: 'Easter celebrates the resurrection of Jesus.',   photoQuery: 'easter sunrise' },
+        { word: 'holiday',      sentence: 'Easter is a four-day public holiday.',           photoQuery: 'public holiday' },
+        { word: 'church',       sentence: 'Many people go to church on Easter Sunday.',     photoQuery: 'church service' },
+        { word: 'hot cross bun',sentence: 'Hot cross buns are eaten on Good Friday.',       photoQuery: 'hot cross buns' },
+        { word: 'spring',       sentence: 'Easter is in autumn in Australia.',              photoQuery: 'autumn leaves' },
+        { word: 'family',       sentence: 'Easter is a time for family gatherings.',        photoQuery: 'family together' },
+        { word: 'lamb',         sentence: 'Roast lamb is a traditional Easter meal.',       photoQuery: 'roast lamb meal' },
+      ],
+
+      // Community / civic
+      community:    [
+        { word: 'volunteer',    sentence: 'I volunteer at the community centre.',            photoQuery: 'volunteering community' },
+        { word: 'council',      sentence: 'The local council runs the library.',            photoQuery: 'council building' },
+        { word: 'neighbour',    sentence: 'My neighbour helped me when I moved in.',        photoQuery: 'neighbours friendly' },
+        { word: 'event',        sentence: 'There is a community event this Saturday.',       photoQuery: 'community event' },
+        { word: 'support',      sentence: 'Community support is available for new arrivals.', photoQuery: 'community support' },
+        { word: 'meeting',      sentence: 'We have a community meeting once a month.',      photoQuery: 'community meeting' },
+        { word: 'diversity',    sentence: 'Our community celebrates cultural diversity.',    photoQuery: 'cultural diversity' },
+        { word: 'service',      sentence: 'There are many services for families in need.',  photoQuery: 'community service' },
+      ],
+
+      // Food
+      food:         [
+        { word: 'ingredient',   sentence: 'What ingredients do you need for this recipe?',  photoQuery: 'cooking ingredients' },
+        { word: 'recipe',       sentence: 'I followed a recipe to make this dish.',         photoQuery: 'recipe book food' },
+        { word: 'serve',        sentence: 'This recipe serves four people.',                 photoQuery: 'serving food' },
+        { word: 'taste',        sentence: 'This food has a sweet taste.',                    photoQuery: 'tasting food' },
+        { word: 'fresh',        sentence: 'Buy fresh vegetables at the market.',             photoQuery: 'fresh vegetables market' },
+        { word: 'meal',         sentence: 'We eat a family meal together at night.',         photoQuery: 'family meal dinner' },
+        { word: 'culture',      sentence: 'Food is an important part of our culture.',      photoQuery: 'multicultural food' },
+        { word: 'allergy',      sentence: 'Tell the restaurant if you have a food allergy.', photoQuery: 'food allergy' },
+      ],
+      cooking:      'food',
+      nutrition:    'food',
+      recipe:       'food',
+
+      // Environment / nature
+      environment:  [
+        { word: 'recycle',      sentence: 'Put glass and paper in the recycling bin.',       photoQuery: 'recycling bins' },
+        { word: 'rubbish',      sentence: 'Put your rubbish in the bin, not on the ground.', photoQuery: 'rubbish bin' },
+        { word: 'council',      sentence: 'The council collects bins every week.',           photoQuery: 'bin collection truck' },
+        { word: 'nature',       sentence: 'Australia has beautiful nature to protect.',      photoQuery: 'australia nature' },
+        { word: 'waste',        sentence: 'Try to reduce food waste at home.',               photoQuery: 'food waste' },
+        { word: 'energy',       sentence: 'Turn off the lights to save energy.',             photoQuery: 'solar energy' },
+        { word: 'water',        sentence: 'Do not waste water — it is precious.',            photoQuery: 'water conservation' },
+        { word: 'climate',      sentence: 'Climate change affects our weather.',             photoQuery: 'climate weather' },
+      ],
+
+      // Emergency / safety
+      emergency:    [
+        { word: 'triple zero',  sentence: 'Call 000 in an emergency.',                       photoQuery: 'emergency call 000' },
+        { word: 'fire',         sentence: 'Get out of the building if there is a fire.',     photoQuery: 'fire escape' },
+        { word: 'ambulance',    sentence: 'An ambulance comes when someone is very sick.',   photoQuery: 'ambulance' },
+        { word: 'police',       sentence: 'Call the police if you need help.',               photoQuery: 'police car' },
+        { word: 'evacuation',   sentence: 'Follow the evacuation sign to exit safely.',      photoQuery: 'evacuation exit' },
+        { word: 'first aid',    sentence: 'I completed a first aid course last year.',       photoQuery: 'first aid kit' },
+        { word: 'safe',         sentence: 'Always stay safe in an emergency.',               photoQuery: 'safety sign' },
+        { word: 'bushfire',     sentence: 'Check fire alerts during hot weather.',           photoQuery: 'bushfire warning' },
+      ],
+      safety:       'emergency',
+      fire:         'emergency',
+      police:       'emergency',
+    };
+
+    // Generic fallback cards used when no topic match is found
+    const GENERIC_FLASHCARDS = [
+      { word: 'understand',   sentenceA1: 'I don\'t understand.',                            sentenceB1: 'I do not understand. Can you explain that more slowly?',    photoQuery: 'thinking student' },
+      { word: 'help',         sentenceA1: 'Can you help me?',                                sentenceB1: 'Could you please help me with this task?',                  photoQuery: 'helping hand' },
+      { word: 'repeat',       sentenceA1: 'Say it again, please.',                           sentenceB1: 'Could you repeat that? I didn\'t catch it.',                photoQuery: 'listening carefully' },
+      { word: 'spell',        sentenceA1: 'How do you spell it?',                            sentenceB1: 'How do you spell that word? Can you write it down?',        photoQuery: 'spelling letters' },
+      { word: 'meaning',      sentenceA1: 'What does this mean?',                            sentenceB1: 'What is the meaning of this word in this context?',         photoQuery: 'dictionary open' },
+      { word: 'practice',     sentenceA1: 'I practise every day.',                           sentenceB1: 'Regular practice helps you improve your English quickly.',  photoQuery: 'studying practice' },
+      { word: 'example',      sentenceA1: 'Can you show me?',                                sentenceB1: 'Could you give me an example of how to use this word?',    photoQuery: 'example whiteboard' },
+      { word: 'answer',       sentenceA1: 'I know the answer.',                              sentenceB1: 'I think I know the answer — let me check first.',           photoQuery: 'raising hand answer' },
+    ];
+
     function generateFlashcardCards(topic, focus) {
-      // Eight practical vocabulary cards using the lesson topic.
-      // Teachers can edit these before printing.
-      return [
-        { word: 'appointment',  sentence: `I have an appointment about ${topic}.` },
-        { word: 'information',  sentence: `I need information about ${topic}.` },
-        { word: 'understand',   sentence: `I do not understand. Can you explain ${topic} slowly?` },
-        { word: 'question',     sentence: `I have a question about ${topic}.` },
-        { word: 'help',         sentence: `Can you help me with ${topic}, please?` },
-        { word: 'explain',      sentence: `Please explain this part of ${topic} to me.` },
-        { word: 'important',    sentence: `It is important to know about ${topic}.` },
-        { word: 'address',      sentence: `What is the address? I need to go there for ${topic}.` },
-      ];
+      const topicLower = topic.toLowerCase().replace(/[^a-z\s]/g, '').trim();
+      const words = topicLower.split(/\s+/);
+
+      // Try each word in the topic against our vocab map
+      for (const word of words) {
+        let match = TOPIC_VOCAB[word];
+        // Follow alias pointers (e.g. 'bus' -> 'transport')
+        if (typeof match === 'string') match = TOPIC_VOCAB[match];
+        if (Array.isArray(match)) return match;
+      }
+
+      // Also try partial matches (e.g. "Mother's Day" -> check for 'mother')
+      for (const key of Object.keys(TOPIC_VOCAB)) {
+        if (topicLower.includes(key)) {
+          let match = TOPIC_VOCAB[key];
+          if (typeof match === 'string') match = TOPIC_VOCAB[match];
+          if (Array.isArray(match)) return match;
+        }
+      }
+
+      // Fallback: make generic cards with the topic name woven in
+      return GENERIC_FLASHCARDS.map(card => ({
+        ...card,
+        sentence: card.sentence,
+      }));
     }
 
     // =============================================
@@ -2019,20 +2325,28 @@ Thank you for your help today. It makes a real difference.`;
     // BUILD FLASHCARDS PANEL HTML
     // =============================================
 
-    function buildFlashcardsPanel(tab, cards) {
-      let cardsHTML = '';
-      cards.forEach(card => {
-        const emoji = getFlashcardEmoji(card.word);
-        cardsHTML += `
-          <div class="flashcard">
-            <div class="flashcard-image-box" aria-hidden="true">
-              <span class="flashcard-emoji">${emoji}</span>
-            </div>
-            <div class="flashcard-word">${escapeHTML(card.word)}</div>
-            <div class="flashcard-sentence">${escapeHTML(card.sentence)}</div>
+    function buildFlashcardCard(card) {
+      const emoji = getFlashcardEmoji(card.word);
+      return `
+        <div class="flashcard" data-photo-query="${escapeHTML(card.photoQuery || card.word)}">
+          <div class="flashcard-image-box">
+            <span class="flashcard-photo-loading">${emoji}</span>
           </div>
-        `;
-      });
+          <div class="flashcard-word">${escapeHTML(card.word)}</div>
+          <div class="flashcard-sentence">${escapeHTML(card.sentence)}</div>
+        </div>
+      `;
+    }
+
+    function buildFlashcardsPanel(tab, cards) {
+      // Split cards into A1 (beginner) and B1 (intermediate) sets
+      // A1: first 8 cards use simpler sentence from card.sentenceA1 if provided, else sentence
+      // B1: same words but use card.sentenceB1 if provided, else sentence
+      const a1Cards = cards.map(c => ({ ...c, sentence: c.sentenceA1 || c.sentence }));
+      const b1Cards = cards.map(c => ({ ...c, sentence: c.sentenceB1 || c.sentence }));
+
+      let a1HTML = a1Cards.map(buildFlashcardCard).join('');
+      let b1HTML = b1Cards.map(buildFlashcardCard).join('');
 
       return `
         <div class="tab-panel-card">
@@ -2043,12 +2357,47 @@ Thank you for your help today. It makes a real difference.`;
             <button class="btn btn-teal flashcards-docx-btn" type="button">⬇ Download Flashcards as Word Doc</button>
             <span class="inline-feedback copy-tab-feedback"></span>
           </div>
-          <p class="flashcard-intro">Suggested vocabulary cards for this topic — edit the words and sentences before printing to match your lesson.</p>
-          <div class="flashcard-grid" id="content-${tab.id}">
-            ${cardsHTML}
+          <div class="flashcard-level-toggle">
+            <button class="flashcard-level-btn active" data-level="a1">A1 Beginner</button>
+            <button class="flashcard-level-btn" data-level="b1">B1 Intermediate</button>
+          </div>
+          <p class="flashcard-intro">Topic-matched vocabulary cards — photos load automatically. Edit sentences before printing if needed.</p>
+          <div class="flashcard-grid" id="content-${tab.id}" data-active-level="a1">
+            <div class="flashcard-level-set" data-set="a1">${a1HTML}</div>
+            <div class="flashcard-level-set" data-set="b1" style="display:none">${b1HTML}</div>
           </div>
         </div>
       `;
+    }
+
+    // Load Unsplash photos for all visible flashcards
+    async function loadFlashcardPhotos(container) {
+      const cards = container.querySelectorAll('.flashcard[data-photo-query]');
+      // Deduplicate queries that have already had photos loaded in this grid
+      const loaded = new Set();
+      const promises = Array.from(cards).map(async card => {
+        const query = card.getAttribute('data-photo-query');
+        if (!query || loaded.has(query)) return;
+        loaded.add(query);
+        const imgBox = card.querySelector('.flashcard-image-box');
+        if (!imgBox) return;
+        // Unsplash Source API — free, no API key, returns a redirect to a real photo
+        const src = `https://source.unsplash.com/400x300/?${encodeURIComponent(query)}`;
+        const img = document.createElement('img');
+        img.className = 'flashcard-photo';
+        img.alt = query;
+        img.loading = 'lazy';
+        img.onerror = () => {
+          // Keep emoji fallback on error — do nothing
+        };
+        img.onload = () => {
+          // Replace loading emoji with real photo
+          imgBox.innerHTML = '';
+          imgBox.appendChild(img);
+        };
+        img.src = src;
+      });
+      await Promise.allSettled(promises);
     }
 
     // =============================================
@@ -2158,6 +2507,29 @@ Thank you for your help today. It makes a real difference.`;
 
       // Wire up tab events
       wireTabEvents();
+
+      // Wire up flashcard level toggle buttons
+      const flashcardPanel = document.getElementById('panel-flashcards');
+      if (flashcardPanel) {
+        const toggleBtns = flashcardPanel.querySelectorAll('.flashcard-level-btn');
+        const levelSets = flashcardPanel.querySelectorAll('.flashcard-level-set');
+        toggleBtns.forEach(btn => {
+          btn.addEventListener('click', () => {
+            const level = btn.dataset.level;
+            toggleBtns.forEach(b => b.classList.toggle('active', b.dataset.level === level));
+            levelSets.forEach(set => {
+              const show = set.dataset.set === level;
+              set.style.display = show ? '' : 'none';
+            });
+            // Load photos for newly visible set
+            const visibleSet = flashcardPanel.querySelector(`.flashcard-level-set[data-set="${level}"]`);
+            if (visibleSet) loadFlashcardPhotos(visibleSet);
+          });
+        });
+        // Load A1 photos immediately
+        const a1Set = flashcardPanel.querySelector('.flashcard-level-set[data-set="a1"]');
+        if (a1Set) loadFlashcardPhotos(a1Set);
+      }
 
       // Wire up reflection autosave
       const reflectionTextarea = document.getElementById('reflection-textarea');
